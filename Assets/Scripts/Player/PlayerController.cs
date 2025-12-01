@@ -5,12 +5,10 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public static PlayerController Instance { get; set; }
-
-
     [field: Header("References")]
     [HideInInspector] public Rigidbody2D RB { get; private set; }
     [HideInInspector] public BoxCollider2D Col { get; private set; }
+    [HideInInspector] public PlayerInteraction Interaction { get; private set; }
     [HideInInspector] public LayerMask GroundLayer { get; private set; }
 
     // === USTAWIENIA (TWEAKOWANIE FELLINGU) ===
@@ -36,7 +34,12 @@ public class PlayerController : MonoBehaviour
     [field: Header("Visuals")]
     private bool IsFacingRight= true; // Domyślnie w prawo
 
+
+    [field: Header("Inputs")]
     [field: SerializeField] public Vector2 MovementInput { get; private set; }
+    [field: SerializeField] public Vector2 MousePosition { get; private set; }
+    public bool InteractionTriggered { get; set; }
+    public bool InteractionInput { get; set; }
     public bool JumpInput { get; set; }     // Czy przycisk jest wciśnięty?
     public bool JumpTriggered { get; set; } // Czy w tej klatce naciśnięto skok? (Buffer)
 
@@ -47,6 +50,7 @@ public class PlayerController : MonoBehaviour
     {
         RB = GetComponent<Rigidbody2D>();
         Col = GetComponent<BoxCollider2D>();
+        Interaction = GetComponent<PlayerInteraction>();
         _stateMachine = GetComponent<PlayerStateMachine>(); 
 
         GroundLayer = 3;
@@ -54,6 +58,9 @@ public class PlayerController : MonoBehaviour
         InputActions = new GameInput();
         InputActions.Player.Move.performed += ctx => MovementInput = ctx.ReadValue<Vector2>();
         InputActions.Player.Move.canceled += ctx => MovementInput = Vector2.zero;
+        InputActions.UI.Click.performed+= ctx => {InteractionTriggered = true; InteractionInput = true; };
+        InputActions.UI.Click.canceled += ctx => InteractionInput = false;
+        InputActions.UI.Point.performed+= ctx => MousePosition = ctx.ReadValue<Vector2>();
         
         InputActions.Player.Jump.performed += ctx => { JumpInput = true; JumpTriggered = true; };
         InputActions.Player.Jump.canceled += ctx => JumpInput = false;
@@ -99,6 +106,15 @@ public class PlayerController : MonoBehaviour
             else
                 transform.rotation = Quaternion.Euler(0, 180, 0);
         }
+    }
+    public Vector2 GetWorldAimPosition()
+    {
+        // 1. Jeśli gramy na Myszce:
+        Vector2 worldPos = Camera.main.ScreenToWorldPoint(MousePosition);
+        return new Vector2(worldPos.x, worldPos.y);
+
+        // 2. (Przyszłość) Jeśli gramy na Padzie:
+        // return (Vector2)transform.position + (RawLookInput * zasięg);
     }
 
     private void OnDrawGizmos()
