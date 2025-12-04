@@ -28,15 +28,14 @@ public class PlayerActiveState : PlayerBaseState
 
     public override void UpdateState()
     {
-        if (_ctx.Controller.InteractionTriggered)
+        if (_ctx.Controller.interactionTriggered)
         {
-            _ctx.Controller.InteractionTriggered = false;
+            _ctx.Controller.interactionTriggered = false;
         }
 
-        if (_ctx.Controller.InteractionInput)
+        if (_ctx.Controller.interactionInput)
         {
-            Debug.Log(true);
-            _ctx.Controller.Interaction.HandleInteraction(_ctx.Controller.GetWorldAimPosition());
+            _ctx.Controller.interaction.HandleInteraction(_ctx.Controller.GetWorldAimPosition());
         }
     }
 }

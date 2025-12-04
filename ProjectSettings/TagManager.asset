@@ -11,8 +11,8 @@ TagManager:
   - Ground
   - Water
   - UI
-  - 
-  - 
+  - Creature
+  - Player
   - 
   - 
   - 
@@ -38,14 +38,17 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Background
+  - name: MapBackground
     uniqueID: 3047556315
     locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Gameplay
+  - name: MapMain
     uniqueID: 2403126841
+    locked: 0
+  - name: Player
+    uniqueID: 1498070895
     locked: 0
   m_RenderingLayers:
   - Default

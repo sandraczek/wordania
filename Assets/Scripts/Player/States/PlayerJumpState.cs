@@ -10,7 +10,7 @@ public class PlayerJumpState : PlayerAirState
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (_ctx.Controller.RB.linearVelocityY < 0f)
+        if (_ctx.Controller.rb.linearVelocityY < 0f)
         {
             _ctx.SwitchState(_factory.Fall);
             return;
@@ -20,14 +20,14 @@ public class PlayerJumpState : PlayerAirState
     public override void EnterState()
     {
         base.EnterState();
-        _ctx.Controller.RB.linearVelocityY = _ctx.Controller.JumpForce;
-        _ctx.Controller.JumpTriggered = false;
+        _ctx.Controller.rb.linearVelocityY = _ctx.Controller.jumpForce;
+        _ctx.Controller.jumpTriggered = false;
     }
 
     public override void ExitState()
     {
-        _ctx.Controller.JumpInput = false;
-        _ctx.Controller.SetGravity(_ctx.Controller.GravityScale);
+        _ctx.Controller.jumpInput = false;
+        _ctx.Controller.SetGravity(_ctx.Controller.gravityScale);
         base.ExitState();
     }
 
@@ -39,9 +39,9 @@ public class PlayerJumpState : PlayerAirState
     public override void UpdateState()
     {
         base.UpdateState();
-        if (!_ctx.Controller.JumpInput && _ctx.Controller.RB.linearVelocityY > 0)
+        if (!_ctx.Controller.jumpInput && _ctx.Controller.rb.linearVelocityY > 0)
         {
-            _ctx.Controller.SetGravity(_ctx.Controller.GravityScale * _ctx.Controller.LowJumpGravityMultiplier);
+            _ctx.Controller.SetGravity(_ctx.Controller.gravityScale * _ctx.Controller.lowJumpGravityMultiplier);
         }
     }
 }

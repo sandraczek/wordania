@@ -9,7 +9,7 @@ public class PlayerGroundState : PlayerActiveState
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (_ctx.Controller.JumpTriggered == true) 
+        if (_ctx.Controller.jumpTriggered == true) 
         {
             _ctx.SwitchState(_factory.Jump);
             return;
@@ -34,13 +34,13 @@ public class PlayerGroundState : PlayerActiveState
     public override void FixedUpdateState()
     {
         base.FixedUpdateState();
-        if(Mathf.Abs(_ctx.Controller.MovementInput.x) > 0.1f){
-            float targetSpeed = Mathf.Sign(_ctx.Controller.MovementInput.x) * _ctx.Controller.MoveSpeed;
-            _ctx.Controller.RB.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.RB.linearVelocityX, targetSpeed, _ctx.Controller.AccelerationSpeed * _ctx.Controller.MoveSpeed);
+        if(Mathf.Abs(_ctx.Controller.movementInput.x) > 0.1f){
+            float targetSpeed = Mathf.Sign(_ctx.Controller.movementInput.x) * _ctx.Controller.moveSpeed;
+            _ctx.Controller.rb.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.rb.linearVelocityX, targetSpeed, _ctx.Controller.accelerationSpeed * _ctx.Controller.moveSpeed);
         }
         else
         {
-            _ctx.Controller.RB.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.RB.linearVelocityX, 0f, _ctx.Controller.StoppingSpeed * _ctx.Controller.MoveSpeed);
+            _ctx.Controller.rb.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.rb.linearVelocityX, 0f, _ctx.Controller.stoppingSpeed * _ctx.Controller.moveSpeed);
         }
     }
 

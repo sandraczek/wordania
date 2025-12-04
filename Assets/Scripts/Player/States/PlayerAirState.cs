@@ -13,7 +13,7 @@ public class PlayerAirState : PlayerActiveState
         base.CheckSwitchStates();
         if (_ctx.Controller.IsGrounded())
         {
-            if(Math.Abs(_ctx.Controller.MovementInput.x) > 0.1f)
+            if(Math.Abs(_ctx.Controller.movementInput.x) > 0.1f)
             {
                 _ctx.SwitchState(_factory.Run);
                 return;
@@ -38,13 +38,13 @@ public class PlayerAirState : PlayerActiveState
     public override void FixedUpdateState()
     {
         base.FixedUpdateState();
-        if(Math.Abs(_ctx.Controller.MovementInput.x) > 0.1f){
-            float targetSpeed = Mathf.Sign(_ctx.Controller.MovementInput.x) * _ctx.Controller.MoveSpeed * _ctx.Controller.MoveSpeedAirMult;
-            _ctx.Controller.RB.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.RB.linearVelocityX, targetSpeed,_ctx.Controller.AirAccelerationSpeed * _ctx.Controller.MoveSpeed * _ctx.Controller.MoveSpeedAirMult);
+        if(Math.Abs(_ctx.Controller.movementInput.x) > 0.1f){
+            float targetSpeed = Mathf.Sign(_ctx.Controller.movementInput.x) * _ctx.Controller.moveSpeed * _ctx.Controller.moveSpeedAirMult;
+            _ctx.Controller.rb.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.rb.linearVelocityX, targetSpeed,_ctx.Controller.airAccelerationSpeed * _ctx.Controller.moveSpeed * _ctx.Controller.moveSpeedAirMult);
         }
         else
         {
-            _ctx.Controller.RB.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.RB.linearVelocityX, 0f, _ctx.Controller.AirStoppingSpeed * _ctx.Controller.MoveSpeed * _ctx.Controller.MoveSpeedAirMult); 
+            _ctx.Controller.rb.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.rb.linearVelocityX, 0f, _ctx.Controller.airStoppingSpeed * _ctx.Controller.moveSpeed * _ctx.Controller.moveSpeedAirMult); 
         }
     }
 
@@ -52,13 +52,13 @@ public class PlayerAirState : PlayerActiveState
     {
         base.UpdateState();
         _ctx.Controller.CheckForFlip();
-        if (_ctx.Controller.JumpTriggered)
+        if (_ctx.Controller.jumpTriggered)
         {
             jumpTrigerTimer+=Time.deltaTime;
-            if(jumpTrigerTimer > _ctx.Controller.JumpBuffor)
+            if(jumpTrigerTimer > _ctx.Controller.jumpBuffor)
             {
                 jumpTrigerTimer = 0f;
-                _ctx.Controller.JumpTriggered = false;
+                _ctx.Controller.jumpTriggered = false;
             }
         }
     }

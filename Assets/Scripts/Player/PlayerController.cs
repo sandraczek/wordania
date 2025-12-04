@@ -6,102 +6,103 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [field: Header("References")]
-    [HideInInspector] public Rigidbody2D RB { get; private set; }
-    [HideInInspector] public BoxCollider2D Col { get; private set; }
-    [HideInInspector] public PlayerInteraction Interaction { get; private set; }
-    [HideInInspector] public LayerMask GroundLayer { get; private set; }
+    [HideInInspector] public Rigidbody2D rb { get; private set; }
+    [HideInInspector] public BoxCollider2D col { get; private set; }
+    [HideInInspector] public PlayerInteraction interaction { get; private set; }
+    [field: SerializeField] private LayerMask groundLayer;
 
     // === USTAWIENIA (TWEAKOWANIE FELLINGU) ===
     [field: Header("Movement Stats")]
-    [field: SerializeField] public float MoveSpeed { get; private set; } = 8f;
-    [field: SerializeField] public float MoveSpeedAirMult { get; private set; } = 0.8f;
-    [field: SerializeField] public float StoppingSpeed { get; private set; } = 1f;
-    [field: SerializeField] public float AirAccelerationSpeed { get; private set; } = 1f;
-    [field: SerializeField] public float AirStoppingSpeed { get; private set; } = 0.1f;
-    [field: SerializeField] public float AccelerationSpeed { get; private set; } = 2f;
-    [field: SerializeField] public float JumpForce { get; private set; } = 26f;
-    [field: SerializeField] public float JumpBuffor { get; private set; } = 0.2f;
+    [field: SerializeField] public float moveSpeed { get; private set; } = 10f;
+    [field: SerializeField] public float moveSpeedAirMult { get; private set; } = 0.8f;
+    [field: SerializeField] public float stoppingSpeed { get; private set; } = 0.1f;
+    [field: SerializeField] public float airAccelerationSpeed { get; private set; } = 0.1f;
+    [field: SerializeField] public float airStoppingSpeed { get; private set; } = 0.01f;
+    [field: SerializeField] public float accelerationSpeed { get; private set; } = 0.2f;
+    [field: SerializeField] public float jumpForce { get; private set; } = 24f;
+    [field: SerializeField] public float jumpBuffor { get; private set; } = 0.1f;
 
     [field: Header("Physics Tweaks")]
-    [field: SerializeField] public float GravityScale { get; private set; } = 4f; // Domyślna grawitacja
-    [field: SerializeField] public float FallGravityMult { get; private set; } = 1.5f; // Szybsze spadanie
-    [field: SerializeField] public float LowJumpGravityMultiplier { get; private set; } = 2f; // Jak szybko spadać po puszczeniu spacji
+    [field: SerializeField] public float gravityScale { get; private set; } = 5f; // Domyślna grawitacja
+    [field: SerializeField] public float fallGravityMult { get; private set; } = 1.5f; // Szybsze spadanie
+    [field: SerializeField] public float lowJumpGravityMultiplier { get; private set; } = 3f; // Jak szybko spadać po puszczeniu spacji
 
     [field: Header("Ground Check")]
     private Vector2 groundCheckSize = new(2.6f, 0.1f);
     private float groundCheckDistance = 0.1f;
 
     [field: Header("Visuals")]
-    private bool IsFacingRight= true; // Domyślnie w prawo
+    private bool isFacingRight= true; // Domyślnie w prawo
 
 
     [field: Header("Inputs")]
-    [field: SerializeField] public Vector2 MovementInput { get; private set; }
-    [field: SerializeField] public Vector2 MousePosition { get; private set; }
-    public bool InteractionTriggered { get; set; }
-    public bool InteractionInput { get; set; }
-    public bool JumpInput { get; set; }     // Czy przycisk jest wciśnięty?
-    public bool JumpTriggered { get; set; } // Czy w tej klatce naciśnięto skok? (Buffer)
+    [field: SerializeField] public Vector2 movementInput { get; private set; }
+    [field: SerializeField] public Vector2 cursorScreenPosition { get; private set; }
+    public bool interactionTriggered { get; set; }
+    public bool interactionInput { get; set; }
+    public bool jumpInput { get; set; }     // Czy przycisk jest wciśnięty?
+    public bool jumpTriggered { get; set; } // Czy w tej klatce naciśnięto skok? (Buffer)
 
-    public GameInput InputActions { get; private set; }
-    private PlayerStateMachine _stateMachine;
+    public GameInput inputActions { get; private set; }
+    private PlayerStateMachine stateMachine;
 
     private void Awake()
     {
-        RB = GetComponent<Rigidbody2D>();
-        Col = GetComponent<BoxCollider2D>();
-        Interaction = GetComponent<PlayerInteraction>();
-        _stateMachine = GetComponent<PlayerStateMachine>(); 
-
-        GroundLayer = 3;
+        rb = GetComponent<Rigidbody2D>();
+        col = GetComponent<BoxCollider2D>();
+        interaction = GetComponent<PlayerInteraction>();
+        stateMachine = GetComponent<PlayerStateMachine>(); 
         
-        InputActions = new GameInput();
-        InputActions.Player.Move.performed += ctx => MovementInput = ctx.ReadValue<Vector2>();
-        InputActions.Player.Move.canceled += ctx => MovementInput = Vector2.zero;
-        InputActions.UI.Click.performed+= ctx => {InteractionTriggered = true; InteractionInput = true; };
-        InputActions.UI.Click.canceled += ctx => InteractionInput = false;
-        InputActions.UI.Point.performed+= ctx => MousePosition = ctx.ReadValue<Vector2>();
+        inputActions = new GameInput();
+        inputActions.Player.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
+        inputActions.Player.Move.canceled += ctx => movementInput = Vector2.zero;
+        inputActions.Player.Interact.performed+= ctx => {interactionTriggered = true; interactionInput = true;};
+        inputActions.Player.Interact.canceled += ctx => interactionInput = false;
+        inputActions.Player.Point.performed+= ctx => cursorScreenPosition = ctx.ReadValue<Vector2>();
+        inputActions.Player.CycleInteraction.started+= ctx => interaction.CycleInteractionMode();
         
-        InputActions.Player.Jump.performed += ctx => { JumpInput = true; JumpTriggered = true; };
-        InputActions.Player.Jump.canceled += ctx => JumpInput = false;
+        inputActions.Player.Jump.performed += ctx => { jumpInput = true; jumpTriggered = true; };
+        inputActions.Player.Jump.canceled += ctx => jumpInput = false;
 
-        JumpInput = false;
-        JumpTriggered = false;
+        jumpInput = false;
+        jumpTriggered = false;
+        interactionTriggered = false;
+        interactionInput = false;
     }
 
-    private void OnEnable() => InputActions.Enable();
-    private void OnDisable() => InputActions.Disable();
+    private void OnEnable() => inputActions.Enable();
+    private void OnDisable() => inputActions.Disable();
 
     private void Update()
     {
-
+        
     }
 
     public bool IsGrounded()
     {
-        return RB.linearVelocityY <= 0f && Physics2D.BoxCast(transform.position + new Vector3(0f, -groundCheckSize.y, 0f), groundCheckSize, 0f, Vector2.down, groundCheckDistance, GroundLayer);
+        return rb.linearVelocityY <= 0f && Physics2D.BoxCast(transform.position + new Vector3(0f, -groundCheckSize.y, 0f), groundCheckSize, 0f, Vector2.down, groundCheckDistance, groundLayer);
     }
 
     public void SetGravity(float scale)
     {
-        RB.gravityScale = scale;
+        rb.gravityScale = scale;
     }
 
     public void CheckForFlip()
     {
         // 1. Warunek konieczny: Input musi być wyraźny (nie 0)
-        if (Mathf.Abs(MovementInput.x) < 0.01f) return;
+        if (Mathf.Abs(movementInput.x) < 0.01f) return;
 
         // 2. Warunek zmiany: Czy kierunek inputu jest inny niż kierunek patrzenia?
-        bool inputRight = MovementInput.x > 0;
+        bool inputRight = movementInput.x > 0;
         
-        if (inputRight != IsFacingRight)
+        if (inputRight != isFacingRight)
         {
-            IsFacingRight = !IsFacingRight;
+            isFacingRight = !isFacingRight;
 
             // "Industry Standard" obrót:
             // Ustawiamy sztywno 0 lub 180. To jest bezpieczniejsze niż mnożenie przez -1.
-            if (IsFacingRight)
+            if (isFacingRight)
                 transform.rotation = Quaternion.Euler(0, 0, 0);
             else
                 transform.rotation = Quaternion.Euler(0, 180, 0);
@@ -110,7 +111,7 @@ public class PlayerController : MonoBehaviour
     public Vector2 GetWorldAimPosition()
     {
         // 1. Jeśli gramy na Myszce:
-        Vector2 worldPos = Camera.main.ScreenToWorldPoint(MousePosition);
+        Vector2 worldPos = Camera.main.ScreenToWorldPoint(cursorScreenPosition);
         return new Vector2(worldPos.x, worldPos.y);
 
         // 2. (Przyszłość) Jeśli gramy na Padzie:
