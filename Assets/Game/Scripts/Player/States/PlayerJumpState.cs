@@ -10,7 +10,7 @@ public class PlayerJumpState : PlayerAirState
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (_ctx.Controller.rb.linearVelocityY < 0f)
+        if (Time.time >= _ctx.Controller.LastJumpTime + _ctx.Controller.minJumpDuration && _ctx.Controller.rb.linearVelocityY < 0f)
         {
             _ctx.SwitchState(_factory.Fall);
             return;
@@ -21,7 +21,9 @@ public class PlayerJumpState : PlayerAirState
     {
         base.EnterState();
         _ctx.Controller.rb.linearVelocityY = _ctx.Controller.jumpForce;
-        _ctx.Controller.jumpTriggered = false;
+
+        _ctx.Controller.JumpPressedTime = float.MinValue;  // jump consume
+        _ctx.Controller.LastJumpTime = Time.time;
     }
 
     public override void ExitState()

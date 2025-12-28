@@ -5,14 +5,16 @@ public class PlayerStateMachine : MonoBehaviour
     [HideInInspector] public PlayerController Controller { get; private set; }
 
     // Stan
-    PlayerBaseState _currentState;
-    PlayerStateFactory _states;
+    private PlayerBaseState _currentState;
+    [field: SerializeField] private string currentStateName;
+    private PlayerStateFactory _factory;
 
     void Awake()
     {
         Controller = GetComponent<PlayerController>();
-        _states = new PlayerStateFactory(this);
-        _currentState = _states.Idle; // Startowy stan
+        _factory = new PlayerStateFactory(this);
+        _currentState = _factory.Idle; // Startowy stan
+        currentStateName = _factory.Idle.GetType().Name;
     }
     void Start()
     {
@@ -34,6 +36,7 @@ public class PlayerStateMachine : MonoBehaviour
     {
         _currentState.ExitState();
         _currentState = newState;
+        currentStateName = newState.GetType().Name;
         _currentState.EnterState();
     }
 }

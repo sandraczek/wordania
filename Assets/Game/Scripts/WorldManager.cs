@@ -4,16 +4,19 @@ using System.Collections.Generic;
 
 public class WorldManager : MonoBehaviour
 {
-    public static WorldManager Instance { get; private set; } // Singleton dla ułatwienia
-
+    public static WorldManager Instance { get; private set; }
+    
     [Header("Maps")]
-    [SerializeField] private Tilemap _mainMap;
     [SerializeField] private Tilemap _backgroundMap;
+    [SerializeField] private Tilemap _mainMap;
+    [SerializeField] private Tilemap _damageMap;
     [SerializeField] private LayerMask _preventBuildingLayer;
 
-    // Słownik do szybkiego wyszukiwania danych o klocku na podstawie TileBase
+    [SerializeField] private BlockDatabase blockDatabase;
     private Dictionary<TileBase, BlockData> _tileToDataMap;
     private Dictionary<Vector3Int, float> _damagedBlocks;
+
+    [SerializeField] private TileBase cracks;
 
     private void Awake()
     {
@@ -22,11 +25,10 @@ public class WorldManager : MonoBehaviour
     }
     private void InitializeDataBase()
     {
+        blockDatabase.Initialize();
         _tileToDataMap = new();
         _damagedBlocks = new();
-        BlockData[] allBlocks = Resources.LoadAll<BlockData>("Data/Blocks");
-
-        foreach (var block in allBlocks)
+        foreach (var block in blockDatabase.allBlocks)
         {
             if (block.Tile != null)
             {
@@ -35,7 +37,6 @@ public class WorldManager : MonoBehaviour
         }
     }
 
-    // Metoda do niszczenia terenu (kopanie)
     public bool TryDamageBlock(Vector3 worldPosition, float damagePower)
     {
         Vector3Int gridPos = _mainMap.WorldToCell(worldPosition);
@@ -57,7 +58,7 @@ public class WorldManager : MonoBehaviour
         }
         else
         {
-            // Jeśli nie zniszczony, zapisz nowy stan uszkodzeń
+
             if (_damagedBlocks.ContainsKey(gridPos))
             {
                 _damagedBlocks[gridPos] = currentDamage;
@@ -66,23 +67,23 @@ public class WorldManager : MonoBehaviour
             {
                 _damagedBlocks.Add(gridPos, currentDamage);
             }
+
+            _damageMap.SetTile(gridPos, cracks);   // adding cracking to tiles
+            _damageMap.SetTileFlags(gridPos, TileFlags.None);
+            _damageMap.SetColor(gridPos, new Color(1f, 1f, 1f, 0.5f));
         }
+
+
 
         return true;
     }
 
-    // Metoda do stawiania terenu
+
     public bool TryPlaceBlock(Vector3 worldPosition, TileBase tileToPlace)
     {
         Vector3Int gridPos = _mainMap.WorldToCell(worldPosition);
-        
-        // Sprawdzamy czy miejsce jest puste
         if (_mainMap.GetTile(gridPos) != null) return false;
-
         Vector3 cellCenter = _mainMap.GetCellCenterWorld(gridPos);
-    
-        // Rozmiar pudełka testowego. Dajemy troszkę mniej niż 1 (np. 0.9f),
-        // żeby można było budować "na styk" przy graczu, bez irytowania go.
         Vector2 checkSize = new Vector2(0.9f, 0.9f);
 
         Collider2D hit = Physics2D.OverlapBox(cellCenter, checkSize, 0f, _preventBuildingLayer);
@@ -96,6 +97,7 @@ public class WorldManager : MonoBehaviour
     private void RemoveBlock(Vector3Int pos)
     {
         _mainMap.SetTile(pos, null);
+        _damageMap.SetTile(pos, null);
 
         if (_damagedBlocks.ContainsKey(pos))
         {

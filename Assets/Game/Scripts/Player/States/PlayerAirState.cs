@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class PlayerAirState : PlayerActiveState
 {
-    float jumpTrigerTimer = 0f;
     public PlayerAirState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory) : base(currentContext, playerStateFactory)
     {
     }
@@ -11,7 +10,7 @@ public class PlayerAirState : PlayerActiveState
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (_ctx.Controller.IsGrounded())
+        if (Time.time >= _ctx.Controller.LastJumpTime + _ctx.Controller.minJumpDuration && _ctx.Controller.isGrounded)
         {
             if(Math.Abs(_ctx.Controller.movementInput.x) > 0.1f)
             {
@@ -52,14 +51,5 @@ public class PlayerAirState : PlayerActiveState
     {
         base.UpdateState();
         _ctx.Controller.CheckForFlip();
-        if (_ctx.Controller.jumpTriggered)
-        {
-            jumpTrigerTimer+=Time.deltaTime;
-            if(jumpTrigerTimer > _ctx.Controller.jumpBuffor)
-            {
-                jumpTrigerTimer = 0f;
-                _ctx.Controller.jumpTriggered = false;
-            }
-        }
     }
 }

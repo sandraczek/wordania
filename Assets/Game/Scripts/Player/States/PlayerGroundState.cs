@@ -9,12 +9,12 @@ public class PlayerGroundState : PlayerActiveState
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (_ctx.Controller.jumpTriggered == true) 
+        if (Time.time < _ctx.Controller.JumpPressedTime + _ctx.Controller.jumpBuffor) 
         {
             _ctx.SwitchState(_factory.Jump);
             return;
         }
-        if (!_ctx.Controller.IsGrounded())
+        if (Time.time > _ctx.Controller.LastGroundedTime + _ctx.Controller.coyoteTime)
         {
             _ctx.SwitchState(_factory.Fall);
             return;

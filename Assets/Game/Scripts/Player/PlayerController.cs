@@ -20,7 +20,14 @@ public class PlayerController : MonoBehaviour
     [field: SerializeField] public float airStoppingSpeed { get; private set; } = 0.01f;
     [field: SerializeField] public float accelerationSpeed { get; private set; } = 0.2f;
     [field: SerializeField] public float jumpForce { get; private set; } = 24f;
-    [field: SerializeField] public float jumpBuffor { get; private set; } = 0.1f;
+
+    [field: Header("Runtime Info")]
+    public float LastJumpTime = float.MinValue;
+    public float LastGroundedTime { get; private set; } = 0f;
+    public float JumpPressedTime = float.MinValue;
+    [field: SerializeField] public float jumpBuffor { get; private set; } = 0.1f;   // jump when pressed before hitting ground
+    [field: SerializeField] public float coyoteTime { get; private set; } = 0.1f;   // time to jump after walking off a block
+    [field: SerializeField] public float minJumpDuration { get; private set; } = 0.1f;  // minimal jump duration for dealing with glitches
 
     [field: Header("Physics Tweaks")]
     [field: SerializeField] public float gravityScale { get; private set; } = 5f; // Domyślna grawitacja
@@ -28,7 +35,8 @@ public class PlayerController : MonoBehaviour
     [field: SerializeField] public float lowJumpGravityMultiplier { get; private set; } = 3f; // Jak szybko spadać po puszczeniu spacji
 
     [field: Header("Ground Check")]
-    private Vector2 groundCheckSize = new(2.6f, 0.1f);
+    [field: SerializeField] public bool isGrounded { get; private set; }
+    private Vector2 groundCheckSize = new(2.4f, 0.1f);
     private float groundCheckDistance = 0.1f;
 
     [field: Header("Visuals")]
@@ -38,10 +46,9 @@ public class PlayerController : MonoBehaviour
     [field: Header("Inputs")]
     [field: SerializeField] public Vector2 movementInput { get; private set; }
     [field: SerializeField] public Vector2 cursorScreenPosition { get; private set; }
-    public bool interactionTriggered { get; set; }
     public bool interactionInput { get; set; }
-    public bool jumpInput { get; set; }     // Czy przycisk jest wciśnięty?
-    public bool jumpTriggered { get; set; } // Czy w tej klatce naciśnięto skok? (Buffer)
+    public bool interactionTriggered {get; set; }
+    public bool jumpInput { get; set; } 
 
     public GameInput inputActions { get; private set; }
     private PlayerStateMachine stateMachine;
@@ -61,13 +68,14 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Point.performed+= ctx => cursorScreenPosition = ctx.ReadValue<Vector2>();
         inputActions.Player.CycleInteraction.started+= ctx => interaction.CycleInteractionMode();
         
-        inputActions.Player.Jump.performed += ctx => { jumpInput = true; jumpTriggered = true; };
+        inputActions.Player.Jump.performed += ctx => { jumpInput = true; JumpPressedTime = Time.time; };
         inputActions.Player.Jump.canceled += ctx => jumpInput = false;
 
         jumpInput = false;
-        jumpTriggered = false;
         interactionTriggered = false;
         interactionInput = false;
+
+        SetGravity(gravityScale);
     }
 
     private void OnEnable() => inputActions.Enable();
@@ -75,12 +83,22 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        
+
+
+    }
+    private void FixedUpdate()
+    {
+        isGrounded = CheckGrounded();
+
+        if (isGrounded)
+        {
+            LastGroundedTime = Time.time;
+        }
     }
 
-    public bool IsGrounded()
+    private bool CheckGrounded()
     {
-        return rb.linearVelocityY <= 0f && Physics2D.BoxCast(transform.position + new Vector3(0f, -groundCheckSize.y, 0f), groundCheckSize, 0f, Vector2.down, groundCheckDistance, groundLayer);
+        return Physics2D.BoxCast(transform.position + new Vector3(0f, -groundCheckSize.y, 0f), groundCheckSize, 0f, Vector2.down, groundCheckDistance, groundLayer);
     }
 
     public void SetGravity(float scale)
