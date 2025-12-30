@@ -9,16 +9,25 @@ public class WorldSettings : ScriptableObject
 
     public int Seed;
 
-    [Header("Terrain Base")]
+    [Header("Terrain")]
     public float HeightMultiplier; // = 50f;
     public int SurfaceOffset; // = half of height
     public float SurfaceFrequency; //  = 0.01f
-
-    [Header("Fractal Details")]
     [Range(1, 8)]
     public int Octaves; // = 4
     public float Persistence; // = 0.5f
     public float Lacunarity; // = 2.0f
+
+    [Header("Caves")]
+    public float GlobalCaveDensity; // = 0.5f;
+    public float MacroScale; // = 0.02f;
+    public float MacroWeight; // = 0.6f;
+    public float MicroScale; // = 0.12f;
+    public float MicroWeight; // = 0.4f;
+    public float TunnelScale; // = 0.04f;
+    public float TunnelThreshold; // = 0.05f;
+    public float CaveStartDepth; // = 0.8f;
+    public float CaveFullDensityDepth; // = 0.6f;
 
     [Header("Other")]
     public LayerMask PreventBuildingLayer;

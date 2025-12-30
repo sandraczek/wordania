@@ -33,7 +33,7 @@ public class WorldManager : MonoBehaviour
 
             //DROPPING LOOT
         }
-        _renderer.UpdateTile(pos.x,pos.y,_worldData.TileArray[pos.x,pos.y]);
+        _renderer.UpdateTile(pos.x,pos.y,_worldData.TileArray[pos.x,pos.y], true);
         return true;
     }
 
@@ -50,7 +50,7 @@ public class WorldManager : MonoBehaviour
         if (hit != null) return false;
 
         _worldData.TileArray[pos.x,pos.y].Main = block.ID;
-        _renderer.UpdateTile(pos.x,pos.y,_worldData.TileArray[pos.x,pos.y]);
+        _renderer.UpdateTile(pos.x,pos.y,_worldData.TileArray[pos.x,pos.y], true);
         return true;
     }
 }

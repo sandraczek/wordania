@@ -14,7 +14,7 @@ public class WorldGenerator : MonoBehaviour
 
         IWorldGenerationPass[] pipeline = {
             new WorldPassTerrain(),
-            //new CavePass(),
+            new WorldPassCave(),
         };
 
         foreach (var pass in pipeline) {
