@@ -9,7 +9,7 @@ public class PlayerInteraction : MonoBehaviour
     private float actionRate = 0.05f;
     private float minePower = 1f; 
     private float nextActionTime;
-    [SerializeField] private TileBase buildingBlock;
+    [SerializeField] private BlockData buildingBlock;
     private enum InteractionMode
     {
         mine,

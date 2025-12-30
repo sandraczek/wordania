@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 public class BlockData : ScriptableObject
 {
     [Header("Id")]
-    public string ItemID;        // np. "dirt_block" (Ważne do zapisu gry!)
+    public int ID;
     public string DisplayName;   // np. "Dirt"
 
     [Header("Visual")]
@@ -13,7 +13,7 @@ public class BlockData : ScriptableObject
 
     [Header("Stats")]
     [Range(1, 10)]
-    public int Hardness = 1;     // Ile uderzeń kilofem potrzeba
+    public float Hardness = 1;     // Ile uderzeń kilofem potrzeba
     //public ItemData DropItem;    // (Opcjonalnie) Co wypada po zniszczeniu
     
     /*

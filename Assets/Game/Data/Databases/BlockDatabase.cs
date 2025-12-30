@@ -8,20 +8,21 @@ using UnityEditor;
 [CreateAssetMenu(menuName = "Block Database")]
 public class BlockDatabase : ScriptableObject
 {
-    public List<BlockData> allBlocks = new();
-    private Dictionary<string, BlockData> _blockMap;
+    public List<BlockData> allBlocks;
+    private Dictionary<int, BlockData> _blockMap;
 
     public void Initialize()
     {
-        _blockMap = new Dictionary<string, BlockData>();
+        _blockMap = new Dictionary<int, BlockData>();
         foreach (var block in allBlocks)
         {
-            if (block != null) _blockMap.TryAdd(block.ItemID, block);
+            if (block != null) _blockMap.TryAdd(block.ID, block);
         }
     }
 
-    public BlockData GetBlock(string id)
+    public BlockData GetBlock(int id)
     {
+        if(id==0) return null;
         if (_blockMap.TryGetValue(id, out var block)) return block;
         return null;
     }

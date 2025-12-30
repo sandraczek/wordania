@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a5e7cab0d255400b80acfcff18232bd, type: 3}
   m_Name: Data_Dirt
   m_EditorClassIdentifier: Assembly-CSharp::BlockData
-  ItemID: dirt
+  ID: 1
   DisplayName: Dirt Block
   Tile: {fileID: 11400000, guid: 48f99f9155688407bb29302dca2619b0, type: 2}
-  Hardness: 2
+  Hardness: 3

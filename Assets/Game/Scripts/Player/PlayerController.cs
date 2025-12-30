@@ -40,8 +40,7 @@ public class PlayerController : MonoBehaviour
     private float groundCheckDistance = 0.1f;
 
     [field: Header("Visuals")]
-    private bool isFacingRight= true; // Domyślnie w prawo
-
+    private bool isFacingRight= true;
 
     [field: Header("Inputs")]
     [field: SerializeField] public Vector2 movementInput { get; private set; }
@@ -49,6 +48,9 @@ public class PlayerController : MonoBehaviour
     public bool interactionInput { get; set; }
     public bool interactionTriggered {get; set; }
     public bool jumpInput { get; set; } 
+
+    [field: Header("Events")]
+    public event Action<Vector3> OnPlayerWarped;
 
     public GameInput inputActions { get; private set; }
     private PlayerStateMachine stateMachine;
@@ -95,6 +97,15 @@ public class PlayerController : MonoBehaviour
             LastGroundedTime = Time.time;
         }
     }
+    public void Warp(Vector3 targetPosition) 
+    {
+        Vector3 delta = targetPosition - transform.position;
+
+        rb.linearVelocity = Vector2.zero;
+        transform.position = targetPosition;
+
+        OnPlayerWarped?.Invoke(delta);
+    }
 
     private bool CheckGrounded()
     {
@@ -108,7 +119,6 @@ public class PlayerController : MonoBehaviour
 
     public void CheckForFlip()
     {
-        // 1. Warunek konieczny: Input musi być wyraźny (nie 0)
         if (Mathf.Abs(movementInput.x) < 0.01f) return;
 
         // 2. Warunek zmiany: Czy kierunek inputu jest inny niż kierunek patrzenia?
