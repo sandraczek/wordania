@@ -10,7 +10,7 @@ public class PlayerJumpState : PlayerAirState
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (Time.time >= _ctx.Controller.LastJumpTime + _ctx.Controller.minJumpDuration && _ctx.Controller.rb.linearVelocityY < 0f)
+        if (Time.time >= _ctx.Controller.LastJumpTime + _ctx.Controller.MinJumpDuration && _ctx.Controller.rb.linearVelocityY < 0f)
         {
             _ctx.SwitchState(_factory.Fall);
             return;
@@ -29,7 +29,7 @@ public class PlayerJumpState : PlayerAirState
     public override void ExitState()
     {
         _ctx.Controller.jumpInput = false;
-        _ctx.Controller.SetGravity(_ctx.Controller.gravityScale);
+        _ctx.Controller.SetGravity(_ctx.Controller.GravityScale);
         base.ExitState();
     }
 
@@ -43,7 +43,7 @@ public class PlayerJumpState : PlayerAirState
         base.UpdateState();
         if (!_ctx.Controller.jumpInput && _ctx.Controller.rb.linearVelocityY > 0)
         {
-            _ctx.Controller.SetGravity(_ctx.Controller.gravityScale * _ctx.Controller.lowJumpGravityMultiplier);
+            _ctx.Controller.SetGravity(_ctx.Controller.GravityScale * _ctx.Controller.LowJumpGravityMultiplier);
         }
     }
 }

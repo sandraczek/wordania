@@ -4,11 +4,11 @@ public class WorldPassCave : IWorldGenerationPass
 {
     public void Execute(WorldData data, WorldSettings settings)
     {
-        for (int x = 0; x < data.Width; x++)
+        for (int x = 0; x < settings.Width; x++)
         {
-            for (int y = 0; y < data.Height; y++)
+            for (int y = 0; y < settings.Height; y++)
             {
-                float currentDepth = (float)y / data.Height;
+                float currentDepth = (float)y / settings.Height;
                 float depthMask = Mathf.InverseLerp(settings.CaveStartDepth, settings.CaveFullDensityDepth, currentDepth);
 
                 float macroNoise = GetNoise(x, y, settings.Seed, settings.MacroScale);

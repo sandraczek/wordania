@@ -4,11 +4,11 @@ public class WorldPassTerrain : IWorldGenerationPass
 {
     public void Execute(WorldData data, WorldSettings settings)
     {
-        for (int x = 0; x < data.Width; x++)
+        for (int x = 0; x < settings.Width; x++)
         {
             int terrainHeight = CalculateFractalHeight(x, settings);
 
-            for (int y = 0; y < data.Height; y++)
+            for (int y = 0; y < settings.Height; y++)
             {
                 if (y < terrainHeight)
                 {
@@ -21,7 +21,7 @@ public class WorldPassTerrain : IWorldGenerationPass
             }
         }
 
-        int centerX = data.Width / 2;
+        int centerX = settings.Width / 2;
         int groundY = CalculateFractalHeight(centerX, settings); 
         data.SpawnPoint = new Vector2Int(centerX, groundY + 2);
     }

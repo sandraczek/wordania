@@ -30,6 +30,7 @@ public class PlayerRunState : PlayerGroundState
     public override void FixedUpdateState()
     {
         base.FixedUpdateState();
+        
     }
 
     public override void UpdateState()

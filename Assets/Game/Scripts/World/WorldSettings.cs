@@ -8,6 +8,7 @@ public class WorldSettings : ScriptableObject
     public int Height;
 
     public int Seed;
+    public int ChunkSize;
 
     [Header("Terrain")]
     public float HeightMultiplier; // = 50f;
@@ -31,6 +32,11 @@ public class WorldSettings : ScriptableObject
 
     [Header("Other")]
     public LayerMask PreventBuildingLayer;
+    public LayerMask GroundLayer;
+    public string MainLayerName = "Main";
+    public string BackgroundLayerName = "Background";
+    public string DamageLayerName = "Damage";
+    public string ForegroundLayerName = "Foreground";
 
     public Vector2Int WorldToGrid(Vector3 worldPos) 
     {

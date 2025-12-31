@@ -13,21 +13,18 @@ public struct TileData {
 }
 public class WorldData
 {
-    public int Width {get;private set;}
-    public int Height {get;private set;}
     public Vector2Int SpawnPoint;
     public TileData[,] TileArray;
     public WorldData(int width, int height)
     {
-        Width = width;
-        Height = height;
-        TileArray = new TileData[Width,Height];
+        TileArray = new TileData[width,height];
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 TileArray[x, y].Foreground = 0; // 0 = Empty
+                TileArray[x, y].Main = 0; // 0 = Empty
                 TileArray[x, y].Background = 0; // 0 = Empty
-                TileArray[x, y].Damage = 0f;
+                TileArray[x, y].Damage = 0;
             }
         }
     }

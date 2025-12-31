@@ -4,47 +4,90 @@ using UnityEngine.Tilemaps;
 
 public class WorldRenderer : MonoBehaviour
 {
-    [SerializeField] private BlockDatabase blockDatabase;
-    [Header("Maps")]
-    [SerializeField] private Tilemap _backgroundMap;
-    [SerializeField] private Tilemap _foregroundMap;
-    [SerializeField] private Tilemap _mainMap;
-    [SerializeField] private Tilemap _damageMap;
+    [SerializeField] private GameObject _chunkPrefab;
+    [SerializeField] private BlockDatabase _blockDatabase;
+    [SerializeField] private WorldSettings _settings;
 
-    public void RenderFullWorld(WorldData data) 
+    private Chunk[,] _chunks;
+
+    public void CreateChunks()
     {
-        _mainMap.ClearAllTiles();
-        _backgroundMap.ClearAllTiles();
-        _foregroundMap.ClearAllTiles();
+        int chunksX = Mathf.CeilToInt((float)_settings.Width / _settings.ChunkSize);
+        int chunksY = Mathf.CeilToInt((float)_settings.Height / _settings.ChunkSize);
+        _chunks = new Chunk[chunksX, chunksY];
 
-        for (int x = 0; x < data.Width; x++) 
+        for (int x = 0; x < chunksX; x++)
         {
-            for (int y = 0; y < data.Height; y++) 
+            for (int y = 0; y < chunksY; y++)
             {
-                TileData currentTile = data.TileArray[x, y];
-                UpdateTile(x,y,currentTile, false);
-
-                // TO ADD - LIGHT LEVEL
+                Vector3 pos = new(x * _settings.ChunkSize, y * _settings.ChunkSize, 0);
+                GameObject go = Instantiate(_chunkPrefab, pos, Quaternion.identity, transform);
+                _chunks[x, y] = go.GetComponent<Chunk>();
+                go.name = $"Chunk_{x}_{y}";
+                _chunks[x, y].Initialize(_settings);
             }
         }
-
-        _mainMap.GetComponent<CompositeCollider2D>().GenerateGeometry();
     }
-    public void UpdateTile(int x, int y, TileData newData, bool updateComposite) 
+    public void RenderWorld(WorldData data)
     {
-        Vector3Int pos = new(x, y, 0);
-        BlockData fg = blockDatabase.GetBlock(newData.Foreground);
-        if (fg != null) _foregroundMap.SetTile(pos, fg.Tile);
-        else _foregroundMap.SetTile(pos, null);
-
-        BlockData bg = blockDatabase.GetBlock(newData.Background);
-        if (bg != null) _backgroundMap.SetTile(pos, bg.Tile);
-        else _backgroundMap.SetTile(pos, null);
+        int chunkSize = _settings.ChunkSize;
         
-        BlockData main = blockDatabase.GetBlock(newData.Main);
-        if (main != null) _mainMap.SetTile(pos, main.Tile);
-        else _mainMap.SetTile(pos, null);
+        for (int cx = 0; cx < _chunks.GetLength(0); cx++)
+        {
+            for (int cy = 0; cy < _chunks.GetLength(1); cy++)
+            {
+                TileBase[] chunkTiles = new TileBase[chunkSize * chunkSize];
+                
+                for (int lx = 0; lx < chunkSize; lx++)
+                {
+                    for (int ly = 0; ly < chunkSize; ly++)
+                    {
+                        int worldX = cx * chunkSize + lx;
+                        int worldY = cy * chunkSize + ly;
 
-        if(updateComposite) _mainMap.GetComponent<CompositeCollider2D>().GenerateGeometry();
+                        if (worldX < _settings.Width && worldY < _settings.Height)
+                        {
+                            int id = data.TileArray[worldX, worldY].Main;
+                            if (id != 0)
+                            {
+                                chunkTiles[lx + ly * chunkSize] = _blockDatabase.GetBlock(id).Tile;
+                            }
+                            else
+                            {
+                                chunkTiles[lx + ly * chunkSize] = null;
+                            }
+                        }
+                    }
+                }
+
+                BoundsInt area = new(0, 0, 0, chunkSize, chunkSize, 1);
+                _chunks[cx, cy].SetTilesBatch(chunkTiles, area);
+            }
+        }
+        // ADD RENDERING FOR OTHER MAPS
+    }
+    public void UpdateTile(int wx, int wy, int id, WorldLayer layer)
+    {
+        int cx = wx / _settings.ChunkSize;
+        int cy = wy / _settings.ChunkSize;
+        int lx = wx % _settings.ChunkSize;
+        int ly = wy % _settings.ChunkSize;
+
+        if (cx < 0 || cy < 0 || cx >= _chunks.GetLength(0) || cy >= _chunks.GetLength(1)) return;
+
+        BlockData Block = _blockDatabase.GetBlock(id);
+        if(Block != null) _chunks[cx, cy].SetTile(lx, ly, Block.Tile, layer);
+        else _chunks[cx, cy].SetTile(lx, ly, null, layer);
+    }
+    public void UpdateTile(int wx, int wy, TileBase tile, WorldLayer layer)
+    {
+        int cx = wx / _settings.ChunkSize;
+        int cy = wy / _settings.ChunkSize;
+        int lx = wx % _settings.ChunkSize;
+        int ly = wy % _settings.ChunkSize;
+
+        if (cx < 0 || cy < 0 || cx >= _chunks.GetLength(0) || cy >= _chunks.GetLength(1)) return;
+
+        _chunks[cx, cy].SetTile(lx, ly, tile, layer);
     }
 }

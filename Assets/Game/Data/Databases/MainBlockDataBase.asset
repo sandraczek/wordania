@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BlockDatabase
   allBlocks:
   - {fileID: 11400000, guid: 870dc9c10be2f458e89e1ae626b4996f, type: 2}
+  _crackTiles:
+  - {fileID: 0}

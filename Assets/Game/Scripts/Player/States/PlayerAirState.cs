@@ -10,7 +10,7 @@ public class PlayerAirState : PlayerActiveState
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (Time.time >= _ctx.Controller.LastJumpTime + _ctx.Controller.minJumpDuration && _ctx.Controller.isGrounded)
+        if (Time.time >= _ctx.Controller.LastJumpTime + _ctx.Controller.MinJumpDuration && _ctx.Controller.IsGrounded)
         {
             if(Math.Abs(_ctx.Controller.movementInput.x) > 0.1f)
             {

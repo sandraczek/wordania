@@ -33,7 +33,9 @@ public class WorldManager : MonoBehaviour
 
             //DROPPING LOOT
         }
-        _renderer.UpdateTile(pos.x,pos.y,_worldData.TileArray[pos.x,pos.y], true);
+        _renderer.UpdateTile(pos.x,pos.y,_worldData.TileArray[pos.x,pos.y].Main, WorldLayer.Main);
+        TileBase cracks = _blockDatabase.GetCracks(_worldData.TileArray[pos.x,pos.y].Damage);
+        _renderer.UpdateTile(pos.x,pos.y,cracks, WorldLayer.Damage);
         return true;
     }
 
@@ -50,7 +52,7 @@ public class WorldManager : MonoBehaviour
         if (hit != null) return false;
 
         _worldData.TileArray[pos.x,pos.y].Main = block.ID;
-        _renderer.UpdateTile(pos.x,pos.y,_worldData.TileArray[pos.x,pos.y], true);
+        _renderer.UpdateTile(pos.x,pos.y,_worldData.TileArray[pos.x,pos.y].Main, WorldLayer.Main);
         return true;
     }
 }

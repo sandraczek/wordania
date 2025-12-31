@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public Rigidbody2D rb { get; private set; }
     [HideInInspector] public BoxCollider2D col { get; private set; }
     [HideInInspector] public PlayerInteraction interaction { get; private set; }
-    [field: SerializeField] private LayerMask groundLayer;
+    [field: SerializeField] private WorldSettings _settings;
 
     // === USTAWIENIA (TWEAKOWANIE FELLINGU) ===
     [field: Header("Movement Stats")]
@@ -20,22 +20,23 @@ public class PlayerController : MonoBehaviour
     [field: SerializeField] public float airStoppingSpeed { get; private set; } = 0.01f;
     [field: SerializeField] public float accelerationSpeed { get; private set; } = 0.2f;
     [field: SerializeField] public float jumpForce { get; private set; } = 24f;
+    [field: SerializeField] private float _stepLookDistance = 0.2f;
 
     [field: Header("Runtime Info")]
     public float LastJumpTime = float.MinValue;
     public float LastGroundedTime { get; private set; } = 0f;
     public float JumpPressedTime = float.MinValue;
-    [field: SerializeField] public float jumpBuffor { get; private set; } = 0.1f;   // jump when pressed before hitting ground
-    [field: SerializeField] public float coyoteTime { get; private set; } = 0.1f;   // time to jump after walking off a block
-    [field: SerializeField] public float minJumpDuration { get; private set; } = 0.1f;  // minimal jump duration for dealing with glitches
+    [field: SerializeField] public float JumpBuffor { get; private set; } = 0.1f;   // jump when pressed before hitting ground
+    [field: SerializeField] public float CoyoteTime { get; private set; } = 0.1f;   // time to jump after walking off a block
+    [field: SerializeField] public float MinJumpDuration { get; private set; } = 0.1f;  // minimal jump duration for dealing with glitches
 
     [field: Header("Physics Tweaks")]
-    [field: SerializeField] public float gravityScale { get; private set; } = 5f; // Domyślna grawitacja
-    [field: SerializeField] public float fallGravityMult { get; private set; } = 1.5f; // Szybsze spadanie
-    [field: SerializeField] public float lowJumpGravityMultiplier { get; private set; } = 3f; // Jak szybko spadać po puszczeniu spacji
+    [field: SerializeField] public float GravityScale { get; private set; } = 5f; // Domyślna grawitacja
+    [field: SerializeField] public float FallGravityMult { get; private set; } = 1.5f; // Szybsze spadanie
+    [field: SerializeField] public float LowJumpGravityMultiplier { get; private set; } = 3f; // Jak szybko spadać po puszczeniu spacji
 
     [field: Header("Ground Check")]
-    [field: SerializeField] public bool isGrounded { get; private set; }
+    [field: SerializeField] public bool IsGrounded { get; private set; }
     private Vector2 groundCheckSize = new(2.4f, 0.1f);
     private float groundCheckDistance = 0.1f;
 
@@ -77,7 +78,7 @@ public class PlayerController : MonoBehaviour
         interactionTriggered = false;
         interactionInput = false;
 
-        SetGravity(gravityScale);
+        SetGravity(GravityScale);
     }
 
     private void OnEnable() => inputActions.Enable();
@@ -90,9 +91,9 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        isGrounded = CheckGrounded();
+        IsGrounded = CheckGrounded();
 
-        if (isGrounded)
+        if (IsGrounded)
         {
             LastGroundedTime = Time.time;
         }
@@ -109,7 +110,9 @@ public class PlayerController : MonoBehaviour
 
     private bool CheckGrounded()
     {
-        return Physics2D.BoxCast(transform.position + new Vector3(0f, -groundCheckSize.y, 0f), groundCheckSize, 0f, Vector2.down, groundCheckDistance, groundLayer);
+        Vector2 origin = (Vector2)transform.position + new Vector2(0f, -(groundCheckSize.y / 2) + 0.1f);
+
+        return Physics2D.BoxCast(origin, groundCheckSize, 0f, Vector2.down, groundCheckDistance + 0.1f, _settings.GroundLayer);
     }
 
     public void SetGravity(float scale)
@@ -144,6 +147,41 @@ public class PlayerController : MonoBehaviour
 
         // 2. (Przyszłość) Jeśli gramy na Padzie:
         // return (Vector2)transform.position + (RawLookInput * zasięg);
+    }
+
+    public void TryStepUp(float horizontalInput)
+    {
+        if (Mathf.Abs(horizontalInput) < 0.01f) return;
+
+        float direction = Mathf.Sign(horizontalInput);
+        Vector2 rayOrigin = new(
+            col.bounds.center.x + (direction * col.bounds.extents.x), 
+            col.bounds.min.y + 0.05f
+        );
+
+        RaycastHit2D hitLow = Physics2D.Raycast(rayOrigin, Vector2.right * direction, _stepLookDistance, _settings.GroundLayer);
+        
+        if (hitLow.collider != null)
+        {
+            RaycastHit2D hitHigh = Physics2D.Raycast(rayOrigin + Vector2.up * _settings.TileSize, Vector2.right * direction, _stepLookDistance, _settings.GroundLayer);
+
+            if (hitHigh.collider == null)
+            {
+                Vector2 targetPos = rb.position + new Vector2(direction * 0.1f, _settings.TileSize + 0.05f);
+                Collider2D overlap = Physics2D.OverlapBox(targetPos + col.offset, col.size * 0.95f, 0, _settings.GroundLayer);
+
+                if (overlap == null)
+                {
+                    ExecuteStepUp();
+                }
+            }
+        }
+    }
+
+    private void ExecuteStepUp()
+    {
+        rb.MovePosition(rb.position + Vector2.up * (_settings.TileSize + 0.05f));
+        if (rb.linearVelocityY < 0) rb.linearVelocityY = 0f;
     }
 
     private void OnDrawGizmos()
