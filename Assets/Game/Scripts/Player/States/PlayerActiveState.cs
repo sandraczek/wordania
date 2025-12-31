@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class PlayerActiveState : PlayerBaseState
 {
+    public override bool CanPerformActions => true;
+    public override bool CanSetSlot => true;
     public PlayerActiveState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory) : base(currentContext, playerStateFactory)
     {
     }
@@ -28,14 +30,6 @@ public class PlayerActiveState : PlayerBaseState
 
     public override void UpdateState()
     {
-        if (_ctx.Controller.interactionTriggered)
-        {
-            _ctx.Controller.interactionTriggered = false;
-        }
 
-        if (_ctx.Controller.interactionInput)
-        {
-            _ctx.Controller.interaction.HandleInteraction(_ctx.Controller.GetWorldAimPosition());
-        }
     }
 }

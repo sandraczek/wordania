@@ -10,9 +10,9 @@ public class PlayerAirState : PlayerActiveState
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (Time.time >= _ctx.Controller.LastJumpTime + _ctx.Controller.MinJumpDuration && _ctx.Controller.IsGrounded)
+        if (Time.time >= _ctx.Controller.LastJumpTime + _ctx.Controller.Config.MinJumpDuration && _ctx.Controller.IsGrounded)
         {
-            if(Math.Abs(_ctx.Controller.movementInput.x) > 0.1f)
+            if(Math.Abs(_ctx.Controller.MovementInput.x) > 0.1f)
             {
                 _ctx.SwitchState(_factory.Run);
                 return;
@@ -37,13 +37,13 @@ public class PlayerAirState : PlayerActiveState
     public override void FixedUpdateState()
     {
         base.FixedUpdateState();
-        if(Math.Abs(_ctx.Controller.movementInput.x) > 0.1f){
-            float targetSpeed = Mathf.Sign(_ctx.Controller.movementInput.x) * _ctx.Controller.moveSpeed * _ctx.Controller.moveSpeedAirMult;
-            _ctx.Controller.rb.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.rb.linearVelocityX, targetSpeed,_ctx.Controller.airAccelerationSpeed * _ctx.Controller.moveSpeed * _ctx.Controller.moveSpeedAirMult);
+        if(Math.Abs(_ctx.Controller.MovementInput.x) > 0.1f){
+            float targetSpeed = Mathf.Sign(_ctx.Controller.MovementInput.x) * _ctx.Controller.Config.MoveSpeed * _ctx.Controller.Config.MoveSpeedAirMult;
+            _ctx.Controller.RB.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.RB.linearVelocityX, targetSpeed,_ctx.Controller.Config.AirAccelerationSpeed * _ctx.Controller.Config.MoveSpeed * _ctx.Controller.Config.MoveSpeedAirMult);
         }
         else
         {
-            _ctx.Controller.rb.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.rb.linearVelocityX, 0f, _ctx.Controller.airStoppingSpeed * _ctx.Controller.moveSpeed * _ctx.Controller.moveSpeedAirMult); 
+            _ctx.Controller.RB.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.RB.linearVelocityX, 0f, _ctx.Controller.Config.AirStoppingSpeed * _ctx.Controller.Config.MoveSpeed * _ctx.Controller.Config.MoveSpeedAirMult); 
         }
     }
 

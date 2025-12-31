@@ -15,12 +15,12 @@ public class PlayerFallState : PlayerAirState
     public override void EnterState()
     {
         base.EnterState();
-        _ctx.Controller.SetGravity(_ctx.Controller.GravityScale * _ctx.Controller.FallGravityMult);
+        _ctx.Controller.SetGravity(_ctx.Controller.Config.GravityScale * _ctx.Controller.Config.FallGravityMult);
     }
 
     public override void ExitState()
     {
-        _ctx.Controller.SetGravity(_ctx.Controller.GravityScale);
+        _ctx.Controller.SetGravity(_ctx.Controller.Config.GravityScale);
         base.ExitState();
     }
 

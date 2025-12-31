@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cracks 1
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.Tilemaps.Tile
   m_Sprite: {fileID: 747311438, guid: 5fe5454ec8605de43809133b020d1b69, type: 3}
-  m_Color: {r: 0.7075472, g: 0.67083484, b: 0.67083484, a: 1}
+  m_Color: {r: 0.5566038, g: 0.52772343, b: 0.52772343, a: 1}
   m_Transform:
     e00: 1
     e01: 0

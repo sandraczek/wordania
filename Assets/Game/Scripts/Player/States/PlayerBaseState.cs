@@ -4,6 +4,10 @@ public abstract class PlayerBaseState
     protected PlayerStateMachine _ctx; // Kontekst (dostęp do gracza)
     protected PlayerStateFactory _factory; // Dostęp do innych stanów
 
+    [Header("Booleans")]
+    public virtual bool CanPerformActions => false;
+    public virtual bool CanSetSlot => false;
+
     public PlayerBaseState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory)
     {
         _ctx = currentContext;

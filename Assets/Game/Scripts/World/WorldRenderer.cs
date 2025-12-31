@@ -7,6 +7,7 @@ public class WorldRenderer : MonoBehaviour
     [SerializeField] private GameObject _chunkPrefab;
     [SerializeField] private BlockDatabase _blockDatabase;
     [SerializeField] private WorldSettings _settings;
+    [SerializeField] private WorldManager _manager;
 
     private Chunk[,] _chunks;
 
@@ -24,7 +25,7 @@ public class WorldRenderer : MonoBehaviour
                 GameObject go = Instantiate(_chunkPrefab, pos, Quaternion.identity, transform);
                 _chunks[x, y] = go.GetComponent<Chunk>();
                 go.name = $"Chunk_{x}_{y}";
-                _chunks[x, y].Initialize(_settings);
+                _chunks[x, y].Initialize(_settings, _manager, new Vector2Int(x,y));
             }
         }
     }
@@ -66,28 +67,10 @@ public class WorldRenderer : MonoBehaviour
         }
         // ADD RENDERING FOR OTHER MAPS
     }
-    public void UpdateTile(int wx, int wy, int id, WorldLayer layer)
+    public void ChunkRefresh(Vector2Int pos, WorldLayer layer)
     {
-        int cx = wx / _settings.ChunkSize;
-        int cy = wy / _settings.ChunkSize;
-        int lx = wx % _settings.ChunkSize;
-        int ly = wy % _settings.ChunkSize;
-
-        if (cx < 0 || cy < 0 || cx >= _chunks.GetLength(0) || cy >= _chunks.GetLength(1)) return;
-
-        BlockData Block = _blockDatabase.GetBlock(id);
-        if(Block != null) _chunks[cx, cy].SetTile(lx, ly, Block.Tile, layer);
-        else _chunks[cx, cy].SetTile(lx, ly, null, layer);
+        Chunk chunk = _chunks[pos.x,pos.y];
+        chunk.Refresh(layer);
     }
-    public void UpdateTile(int wx, int wy, TileBase tile, WorldLayer layer)
-    {
-        int cx = wx / _settings.ChunkSize;
-        int cy = wy / _settings.ChunkSize;
-        int lx = wx % _settings.ChunkSize;
-        int ly = wy % _settings.ChunkSize;
 
-        if (cx < 0 || cy < 0 || cx >= _chunks.GetLength(0) || cy >= _chunks.GetLength(1)) return;
-
-        _chunks[cx, cy].SetTile(lx, ly, tile, layer);
-    }
 }

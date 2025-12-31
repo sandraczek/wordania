@@ -5,7 +5,7 @@ public class PlayerStateMachine : MonoBehaviour
     [HideInInspector] public PlayerController Controller { get; private set; }
 
     // Stan
-    private PlayerBaseState _currentState;
+    public PlayerBaseState CurrentState {get;private set;}
     [field: SerializeField] private string currentStateName;
     private PlayerStateFactory _factory;
 
@@ -13,30 +13,30 @@ public class PlayerStateMachine : MonoBehaviour
     {
         Controller = GetComponent<PlayerController>();
         _factory = new PlayerStateFactory(this);
-        _currentState = _factory.Idle; // Startowy stan
+        CurrentState = _factory.Idle; // Startowy stan
         currentStateName = _factory.Idle.GetType().Name;
     }
     void Start()
     {
-        _currentState.EnterState();
+        CurrentState.EnterState();
     }
 
     void Update()
     {
-        _currentState.UpdateState();
-        _currentState.CheckSwitchStates();
+        CurrentState.UpdateState();
+        CurrentState.CheckSwitchStates();
     }
     
     void FixedUpdate()
     {
-        _currentState.FixedUpdateState();
+        CurrentState.FixedUpdateState();
     }
 
     public void SwitchState(PlayerBaseState newState)
     {
-        _currentState.ExitState();
-        _currentState = newState;
+        CurrentState.ExitState();
+        CurrentState = newState;
         currentStateName = newState.GetType().Name;
-        _currentState.EnterState();
+        CurrentState.EnterState();
     }
 }

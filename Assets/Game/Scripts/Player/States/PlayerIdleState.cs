@@ -10,7 +10,7 @@ public class PlayerIdleState : PlayerGroundState
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if(_ctx.Controller.movementInput.x != 0f)
+        if(_ctx.Controller.MovementInput.x != 0f)
         {
             _ctx.SwitchState(_factory.Run);
             return;

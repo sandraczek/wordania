@@ -794,6 +794,7 @@ MonoBehaviour:
   _chunkPrefab: {fileID: 3235297152994477808, guid: 0c19c4f59e75849f8b2da10284e44539, type: 3}
   _blockDatabase: {fileID: 11400000, guid: 081207bfca7514f3a8b67a5ab77d494f, type: 2}
   _settings: {fileID: 11400000, guid: 8bd3fd8847cad47b0bfd36f0478e773f, type: 2}
+  _manager: {fileID: 512467337}
 --- !u!114 &1129551208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -855,27 +856,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 775c64153dfe446e3a5c08db13609790, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  <moveSpeed>k__BackingField: 10
-  <moveSpeedAirMult>k__BackingField: 0.8
-  <stoppingSpeed>k__BackingField: 0.1
-  <airAccelerationSpeed>k__BackingField: 0.1
-  <airStoppingSpeed>k__BackingField: 0.01
-  <accelerationSpeed>k__BackingField: 0.2
-  <jumpForce>k__BackingField: 24
+  _settings: {fileID: 11400000, guid: 8bd3fd8847cad47b0bfd36f0478e773f, type: 2}
+  <Config>k__BackingField: {fileID: 11400000, guid: 901fcaec161494086a973499fd3c0f7e, type: 2}
   LastJumpTime: 0
   JumpPressedTime: -3.4028235e+38
-  <jumpBuffor>k__BackingField: 0.1
-  <coyoteTime>k__BackingField: 0.1
-  <minJumpDuration>k__BackingField: 0.1
-  <gravityScale>k__BackingField: 5
-  <fallGravityMult>k__BackingField: 1.5
-  <lowJumpGravityMultiplier>k__BackingField: 3
-  <isGrounded>k__BackingField: 0
-  <movementInput>k__BackingField: {x: 0, y: 0}
-  <cursorScreenPosition>k__BackingField: {x: 0, y: 0}
+  <IsGrounded>k__BackingField: 0
+  <MovementInput>k__BackingField: {x: 0, y: 0}
+  <CursorScreenPosition>k__BackingField: {x: 0, y: 0}
 --- !u!50 &1689419398
 Rigidbody2D:
   serializedVersion: 5
@@ -948,7 +935,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Size: {x: 2.4, y: 5.4}
-  m_EdgeRadius: 0
+  m_EdgeRadius: 0.02
 --- !u!114 &1689419400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -974,8 +961,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7e5c471226004c6dbc12ed3a2e0d5bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  actionRange: 6
-  buildingBlock: {fileID: 11400000, guid: 870dc9c10be2f458e89e1ae626b4996f, type: 2}
+  _actionRange: 6
+  _actionRate: 0.05
+  _minePower: 1
+  _areaMine: 0
+  _areaRadius: 1.5
+  _buildingBlock: {fileID: 11400000, guid: 870dc9c10be2f458e89e1ae626b4996f, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

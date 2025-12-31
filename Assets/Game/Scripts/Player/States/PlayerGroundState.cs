@@ -9,12 +9,12 @@ public class PlayerGroundState : PlayerActiveState
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (Time.time < _ctx.Controller.JumpPressedTime + _ctx.Controller.JumpBuffor) 
+        if (Time.time < _ctx.Controller.JumpPressedTime + _ctx.Controller.Config.JumpBuffor) 
         {
             _ctx.SwitchState(_factory.Jump);
             return;
         }
-        if (Time.time > _ctx.Controller.LastGroundedTime + _ctx.Controller.CoyoteTime)
+        if (Time.time > _ctx.Controller.LastGroundedTime + _ctx.Controller.Config.CoyoteTime)
         {
             _ctx.SwitchState(_factory.Fall);
             return;
@@ -34,14 +34,14 @@ public class PlayerGroundState : PlayerActiveState
     public override void FixedUpdateState()
     {
         base.FixedUpdateState();
-        if(Mathf.Abs(_ctx.Controller.movementInput.x) > 0.1f){
-            float targetSpeed = Mathf.Sign(_ctx.Controller.movementInput.x) * _ctx.Controller.moveSpeed;
-            _ctx.Controller.rb.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.rb.linearVelocityX, targetSpeed, _ctx.Controller.accelerationSpeed * _ctx.Controller.moveSpeed);
-            _ctx.Controller.TryStepUp(_ctx.Controller.movementInput.x);
+        if(Mathf.Abs(_ctx.Controller.MovementInput.x) > 0.1f){
+            float targetSpeed = Mathf.Sign(_ctx.Controller.MovementInput.x) * _ctx.Controller.Config.MoveSpeed;
+            _ctx.Controller.RB.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.RB.linearVelocityX, targetSpeed, _ctx.Controller.Config.AccelerationSpeed * _ctx.Controller.Config.MoveSpeed);
+            _ctx.Controller.TryStepUp(_ctx.Controller.MovementInput.x);
         }
         else
         {
-            _ctx.Controller.rb.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.rb.linearVelocityX, 0f, _ctx.Controller.stoppingSpeed * _ctx.Controller.moveSpeed);
+            _ctx.Controller.RB.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.RB.linearVelocityX, 0f, _ctx.Controller.Config.StoppingSpeed * _ctx.Controller.Config.MoveSpeed);
         }
     }
 
