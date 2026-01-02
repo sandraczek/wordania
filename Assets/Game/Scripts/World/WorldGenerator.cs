@@ -4,13 +4,11 @@ using UnityEngine.Tilemaps;
 
 public class WorldGenerator : MonoBehaviour
 {
-    [SerializeField] private WorldSettings _settings;
-
-    public WorldData GenerateWorld()
+    public WorldData GenerateWorld(WorldSettings settings)
     {
-        Random.InitState(_settings.Seed); // setting seed for Randomness
+        Random.InitState(settings.Seed); // setting seed for Randomness
 
-        WorldData worldData = new(_settings.Width, _settings.Height);
+        WorldData worldData = new(settings.Width, settings.Height);
 
         IWorldGenerationPass[] pipeline = {
             new WorldPassTerrain(),
@@ -18,7 +16,7 @@ public class WorldGenerator : MonoBehaviour
         };
 
         foreach (var pass in pipeline) {
-            pass.Execute(worldData, _settings);
+            pass.Execute(worldData, settings);
         }
         return worldData;
     }

@@ -1,12 +1,9 @@
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using System.Collections.Generic;
-using System;
-using Unity.VisualScripting;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    private PlayerStateMachine _ctx;
+    private Player _player;
+    [field:SerializeField] private WorldManager worldManager;
     private bool _isPrimaryActionHeld = false;
     [SerializeField] private float _actionRange = 6f;
     [field: SerializeField] private float _actionRate = 0.05f;
@@ -24,27 +21,27 @@ public class PlayerInteraction : MonoBehaviour
     }
     public void Awake()
     {
-        _ctx = GetComponent<PlayerStateMachine>();
+        _player = GetComponent<Player>();
         _nextActionTime = 0f;
     }
     private InteractionMode _interactionMode = InteractionMode.build;
     public void OnEnable()
     {
-        _ctx.Controller.OnHotbarSlotPressed += SetTool;
-        _ctx.Controller.OnToolSettingChanged += CycleToolSetting;
-        _ctx.Controller.OnPrimaryActionHeld += SetPrimaryActionHeld;
+        _player.Inputs.OnHotbarSlotPressed += SetTool;
+        _player.Inputs.OnCycleActionSetting += CycleToolSetting;
+        _player.Inputs.OnPrimaryActionHeld += SetPrimaryActionHeld;
     }
     public void OnDisable()
     {
-        _ctx.Controller.OnHotbarSlotPressed -= _ctx.Controller.Interaction.SetTool;
-        _ctx.Controller.OnToolSettingChanged -= _ctx.Controller.Interaction.CycleToolSetting;
-        _ctx.Controller.OnPrimaryActionHeld -= SetPrimaryActionHeld;
+        _player.Inputs.OnHotbarSlotPressed -= SetTool;
+        _player.Inputs.OnCycleActionSetting -= CycleToolSetting;
+        _player.Inputs.OnPrimaryActionHeld -= SetPrimaryActionHeld;
     }
     public void Update()
     {
-        if(_isPrimaryActionHeld && _ctx.CurrentState.CanPerformActions)
+        if(_isPrimaryActionHeld && _player.States.CurrentState.CanPerformActions)
         {
-            ExecutePrimaryAction(_ctx.Controller.GetWorldAimPosition());
+            ExecutePrimaryAction(_player.Controller.GetWorldAimPosition());
         }
     }
     public bool ExecutePrimaryAction(Vector2 targetWorldPos)
@@ -56,14 +53,14 @@ public class PlayerInteraction : MonoBehaviour
         if (deltaRoundX > _actionRange || deltaRoundY > _actionRange) return false;
         switch (_interactionMode){
             case InteractionMode.build:
-                if(!WorldManager.Instance.TryPlaceBlock(targetWorldPos, _buildingBlock.ID)) return false;
+                if(!worldManager.TryPlaceBlock(targetWorldPos, _buildingBlock.ID)) return false;
                 break;
             case InteractionMode.mine:
                 if(!_areaMine){
-                    if(!WorldManager.Instance.TryDamageBlock(targetWorldPos, _minePower)) return false;
+                    if(!worldManager.TryDamageBlock(targetWorldPos, _minePower)) return false;
                 }
                 else{
-                    if(!WorldManager.Instance.TryDamageCircle(targetWorldPos, _areaRadius, _minePower)) return false;
+                    if(!worldManager.TryDamageCircle(targetWorldPos, _areaRadius, _minePower)) return false;
                 }
                 break;
         }
@@ -72,7 +69,7 @@ public class PlayerInteraction : MonoBehaviour
     }
     public void CycleToolSetting()
     {
-        if(!_ctx.CurrentState.CanSetSlot) return;
+        if(!_player.States.CurrentState.CanSetSlot) return;
         switch (_interactionMode){
             case InteractionMode.mine:
                 _areaMine = !_areaMine;
@@ -83,7 +80,7 @@ public class PlayerInteraction : MonoBehaviour
     }
     public void SetTool(int i)
     {
-        if(!_ctx.CurrentState.CanSetSlot) return;
+        if(!_player.States.CurrentState.CanSetSlot) return;
         if(i == 1)
         {
             _interactionMode = InteractionMode.build;

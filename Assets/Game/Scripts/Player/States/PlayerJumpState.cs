@@ -3,16 +3,16 @@ using Unity.Mathematics;
 
 public class PlayerJumpState : PlayerAirState
 {
-    public PlayerJumpState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory) : base(currentContext, playerStateFactory)
+    public PlayerJumpState(Player player, PlayerStateFactory playerStateFactory) : base(player, playerStateFactory)
     {
     }
 
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (Time.time >= _ctx.Controller.LastJumpTime + _ctx.Controller.Config.MinJumpDuration && _ctx.Controller.RB.linearVelocityY < 0f)
+        if (Time.time >= _player.Controller.LastJumpTime + _player.Config.MinJumpDuration && _player.Controller.GetVelocityY() < 0f)
         {
-            _ctx.SwitchState(_factory.Fall);
+            _player.States.SwitchState(_factory.Fall);
             return;
         }
     }
@@ -20,16 +20,15 @@ public class PlayerJumpState : PlayerAirState
     public override void EnterState()
     {
         base.EnterState();
-        _ctx.Controller.RB.linearVelocityY = _ctx.Controller.Config.JumpForce;
+        _player.Controller.SetVelocityY(_player.Config.JumpForce);
 
-        _ctx.Controller.JumpPressedTime = float.MinValue;  // jump consume
-        _ctx.Controller.LastJumpTime = Time.time;
+        _player.Inputs.ConsumeJump();
+        _player.Controller.LastJumpTime = Time.time;
     }
 
     public override void ExitState()
     {
-        _ctx.Controller.JumpInput = false;
-        _ctx.Controller.SetGravity(_ctx.Controller.Config.GravityScale);
+        _player.Controller.SetGravity(_player.Config.GravityScale);
         base.ExitState();
     }
 
@@ -41,9 +40,9 @@ public class PlayerJumpState : PlayerAirState
     public override void UpdateState()
     {
         base.UpdateState();
-        if (!_ctx.Controller.JumpInput && _ctx.Controller.RB.linearVelocityY > 0)
+        if (!_player.Inputs.JumpInput && _player.Controller.GetVelocityY() > 0f)
         {
-            _ctx.Controller.SetGravity(_ctx.Controller.Config.GravityScale * _ctx.Controller.Config.LowJumpGravityMultiplier);
+            _player.Controller.SetGravity(_player.Config.GravityScale * _player.Config.LowJumpGravityMultiplier);
         }
     }
 }

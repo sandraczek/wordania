@@ -6,10 +6,14 @@ public class WorldRenderer : MonoBehaviour
 {
     [SerializeField] private GameObject _chunkPrefab;
     [SerializeField] private BlockDatabase _blockDatabase;
-    [SerializeField] private WorldSettings _settings;
+    private WorldSettings _settings;
     [SerializeField] private WorldManager _manager;
 
     private Chunk[,] _chunks;
+    public void Initialize(WorldSettings settings)
+    {
+        _settings = settings;
+    }
 
     public void CreateChunks()
     {

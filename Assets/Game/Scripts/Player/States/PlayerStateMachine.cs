@@ -1,20 +1,15 @@
 using UnityEngine;
 public class PlayerStateMachine : MonoBehaviour
 {
-    // Referencje
-    [HideInInspector] public PlayerController Controller { get; private set; }
-
-    // Stan
+    private Player _player;
     public PlayerBaseState CurrentState {get;private set;}
-    [field: SerializeField] private string currentStateName;
     private PlayerStateFactory _factory;
 
     void Awake()
     {
-        Controller = GetComponent<PlayerController>();
-        _factory = new PlayerStateFactory(this);
-        CurrentState = _factory.Idle; // Startowy stan
-        currentStateName = _factory.Idle.GetType().Name;
+        _player = GetComponent<Player>();
+        _factory = new PlayerStateFactory(_player);
+        CurrentState = _factory.Idle;
     }
     void Start()
     {
@@ -36,7 +31,6 @@ public class PlayerStateMachine : MonoBehaviour
     {
         CurrentState.ExitState();
         CurrentState = newState;
-        currentStateName = newState.GetType().Name;
         CurrentState.EnterState();
     }
 }

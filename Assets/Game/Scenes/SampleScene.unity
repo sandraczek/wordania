@@ -284,7 +284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   _blockDatabase: {fileID: 11400000, guid: 081207bfca7514f3a8b67a5ab77d494f, type: 2}
-  _settings: {fileID: 11400000, guid: 8bd3fd8847cad47b0bfd36f0478e773f, type: 2}
+  Settings: {fileID: 11400000, guid: 8bd3fd8847cad47b0bfd36f0478e773f, type: 2}
   _renderer: {fileID: 1129551207}
 --- !u!4 &512467338
 Transform:
@@ -313,7 +313,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 868814750139f4a68b7eecc148d6e9cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  _settings: {fileID: 11400000, guid: 8bd3fd8847cad47b0bfd36f0478e773f, type: 2}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -422,7 +421,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 26.96875
+  orthographic size: 33.75
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -546,7 +545,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000db04a6b539ce3c8f6fbf4a59
+  m_ApplyToSortingLayers: 00000000db04a6b539ce3c8f6fbf4a598fa64ad5
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -593,6 +592,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &634169250
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 634169252}
+  - component: {fileID: 634169251}
+  m_Layer: 0
+  m_Name: DebugManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &634169251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634169250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce148185800754dddbe08eed2ea5c47f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  <Settings>k__BackingField: {fileID: 11400000, guid: 1accd9a4ce62543a1aa1f9bfa17a4e2e, type: 2}
+--- !u!4 &634169252
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634169250}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 249.4464, y: 503.53668, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &703410364
 GameObject:
   m_ObjectHideFlags: 0
@@ -623,11 +667,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   _blockDatabase: {fileID: 11400000, guid: 081207bfca7514f3a8b67a5ab77d494f, type: 2}
-  _worldGenerator: {fileID: 512467339}
   _worldManager: {fileID: 512467337}
-  _worldRenderer: {fileID: 1129551207}
   _player: {fileID: 1689419397}
-  _settings: {fileID: 11400000, guid: 8bd3fd8847cad47b0bfd36f0478e773f, type: 2}
 --- !u!4 &703410366
 Transform:
   m_ObjectHideFlags: 0
@@ -793,7 +834,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WorldRenderer
   _chunkPrefab: {fileID: 3235297152994477808, guid: 0c19c4f59e75849f8b2da10284e44539, type: 3}
   _blockDatabase: {fileID: 11400000, guid: 081207bfca7514f3a8b67a5ab77d494f, type: 2}
-  _settings: {fileID: 11400000, guid: 8bd3fd8847cad47b0bfd36f0478e773f, type: 2}
   _manager: {fileID: 512467337}
 --- !u!114 &1129551208
 MonoBehaviour:
@@ -818,9 +858,11 @@ GameObject:
   - component: {fileID: 1689419396}
   - component: {fileID: 1689419398}
   - component: {fileID: 1689419399}
+  - component: {fileID: 1689419403}
   - component: {fileID: 1689419397}
   - component: {fileID: 1689419400}
   - component: {fileID: 1689419401}
+  - component: {fileID: 1689419402}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -857,12 +899,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   _settings: {fileID: 11400000, guid: 8bd3fd8847cad47b0bfd36f0478e773f, type: 2}
-  <Config>k__BackingField: {fileID: 11400000, guid: 901fcaec161494086a973499fd3c0f7e, type: 2}
   LastJumpTime: 0
-  JumpPressedTime: -3.4028235e+38
   <IsGrounded>k__BackingField: 0
-  <MovementInput>k__BackingField: {x: 0, y: 0}
-  <CursorScreenPosition>k__BackingField: {x: 0, y: 0}
 --- !u!50 &1689419398
 Rigidbody2D:
   serializedVersion: 5
@@ -948,7 +986,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f005a1818f0e469b8526a47774470b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StateAgent
-  currentStateName: 
 --- !u!114 &1689419401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -961,12 +998,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7e5c471226004c6dbc12ed3a2e0d5bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  worldManager: {fileID: 512467337}
   _actionRange: 6
   _actionRate: 0.05
   _minePower: 1
   _areaMine: 0
   _areaRadius: 1.5
   _buildingBlock: {fileID: 11400000, guid: 870dc9c10be2f458e89e1ae626b4996f, type: 2}
+--- !u!114 &1689419402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1689419395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c146f582d14e749a2ab3e3b23b14c9ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  Config: {fileID: 11400000, guid: 901fcaec161494086a973499fd3c0f7e, type: 2}
+--- !u!114 &1689419403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1689419395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c34c733d6d314e9f94f23ef16eb36cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputReader
+  <MovementInput>k__BackingField: {x: 0, y: 0}
+  <CursorScreenPosition>k__BackingField: {x: 0, y: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -975,6 +1040,7 @@ SceneRoots:
   - {fileID: 290940329}
   - {fileID: 619394802}
   - {fileID: 703410366}
+  - {fileID: 634169252}
   - {fileID: 512467338}
   - {fileID: 1689419396}
   - {fileID: 1129551206}

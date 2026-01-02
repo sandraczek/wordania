@@ -43,7 +43,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "CycleInteraction",
+                    "name": "CycleActionSetting",
                     "type": "Button",
                     "id": "4b01423c-ac06-405b-be81-f45a127fec38",
                     "expectedControlType": "",
@@ -395,7 +395,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "CycleInteraction",
+                    "action": "CycleActionSetting",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -912,6 +912,34 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "TrackedDeviceOrientation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Debug",
+            "id": "56b4674e-1b37-4f4d-95c7-053bf36dab31",
+            "actions": [
+                {
+                    "name": "ShowChunks",
+                    "type": "Button",
+                    "id": "0663843f-670d-4828-94d9-2d1668cfa466",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "5a556b4b-df35-4862-a1e1-fadcc6c6856a",
+                    "path": "<Keyboard>/f1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ShowChunks",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

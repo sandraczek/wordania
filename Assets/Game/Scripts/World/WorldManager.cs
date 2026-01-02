@@ -3,24 +3,29 @@ using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 using System.Data;
 
+[RequireComponent(typeof(WorldGenerator))]
 public class WorldManager : MonoBehaviour
 {
-    public static WorldManager Instance { get; private set; }
     [SerializeField] private BlockDatabase _blockDatabase;
-    private WorldData _worldData;
-    [SerializeField] private WorldSettings _settings;
+    public WorldData WorldData {get; private set;}
+    public WorldSettings Settings;
+    private WorldGenerator _generator;
     [SerializeField] private WorldRenderer _renderer;
-    private void Awake()
+    public void Awake()
     {
-        Instance = this;
+        _blockDatabase.Initialize();
+        _generator = GetComponent<WorldGenerator>();
+        _renderer.Initialize(Settings);
     }
-    public void Initialize(WorldData worldData)
+    public void StartWorldGeneration()
     {
-        _worldData = worldData;
+        WorldData = _generator.GenerateWorld(Settings);
+        _renderer.CreateChunks();
+        _renderer.RenderWorld(WorldData);
     }
     public bool TryDamageBlock(Vector3 worldPosition, float damagePower)
     {
-        Vector2Int pos = _settings.WorldToGrid(worldPosition);
+        Vector2Int pos = Settings.WorldToGrid(worldPosition);
         if (!IsWithinBounds(pos.x, pos.y)) return false;
         WorldLayer result = DamageTile(pos.x, pos.y, damagePower);
         if (result == WorldLayer.None) return false;
@@ -32,13 +37,13 @@ public class WorldManager : MonoBehaviour
     public WorldLayer DamageTile(int x, int y, float damagePower)
     {
         if(!IsWithinBounds(x,y)) return WorldLayer.None;
-        BlockData data = _blockDatabase.GetBlock(_worldData.TileArray[x,y].Main);
+        BlockData data = _blockDatabase.GetBlock(WorldData.TileArray[x,y].Main);
         if(data == null) return WorldLayer.None;
-        _worldData.TileArray[x,y].Damage += damagePower / data.Hardness;
+        WorldData.TileArray[x,y].Damage += damagePower / data.Hardness;
         WorldLayer changedLayers;
-        if(_worldData.TileArray[x,y].Damage >= 1f){
-            _worldData.TileArray[x,y].Main = 0;
-            _worldData.TileArray[x,y].Damage = 0f; 
+        if(WorldData.TileArray[x,y].Damage >= 1f){
+            WorldData.TileArray[x,y].Main = 0;
+            WorldData.TileArray[x,y].Damage = 0f; 
 
             //DROPPING LOOT
 
@@ -103,17 +108,17 @@ public class WorldManager : MonoBehaviour
 
     public bool TryPlaceBlock(Vector3 worldPosition, int blockID)
     {
-        Vector2Int pos = _settings.WorldToGrid(worldPosition);
+        Vector2Int pos = Settings.WorldToGrid(worldPosition);
         if (!IsWithinBounds(pos.x, pos.y)) return false;
-        if(_blockDatabase.GetBlock(_worldData.TileArray[pos.x,pos.y].Main) != null) return false;
-        Vector3 cellCenter = _settings.GridToWorld(pos.x,pos.y);
+        if(_blockDatabase.GetBlock(WorldData.TileArray[pos.x,pos.y].Main) != null) return false;
+        Vector3 cellCenter = Settings.GridToWorld(pos.x,pos.y);
         Vector2 checkSize = new(0.9f, 0.9f);
 
-        Collider2D hit = Physics2D.OverlapBox(cellCenter, checkSize, 0f, _settings.PreventBuildingLayer);
+        Collider2D hit = Physics2D.OverlapBox(cellCenter, checkSize, 0f, Settings.PreventBuildingLayer);
 
         if (hit != null) return false;
 
-        _worldData.TileArray[pos.x,pos.y].Main = blockID;
+        WorldData.TileArray[pos.x,pos.y].Main = blockID;
         Vector2Int coord = GetChunkCoord(pos.x, pos.y);
         _renderer.ChunkRefresh(coord, WorldLayer.Main);
         return true;
@@ -121,7 +126,7 @@ public class WorldManager : MonoBehaviour
 
     public TileBase GetTileBase(int x, int y, WorldLayer layer)
     {
-        TileData data = _worldData.TileArray[x, y];
+        TileData data = WorldData.TileArray[x, y];
         int id = 0;
 
         if (layer == WorldLayer.Main) id = data.Main;
@@ -138,12 +143,12 @@ public class WorldManager : MonoBehaviour
     }
     private bool IsWithinBounds(int x, int y)
     {
-        return !(x >= _settings.Width || x < 0 || y >= _settings.Height || y < 0);
+        return !(x >= Settings.Width || x < 0 || y >= Settings.Height || y < 0);
     }
     private Vector2Int GetChunkCoord(int x, int y)
     {
-        int cx = x / _settings.ChunkSize;
-        int cy = y / _settings.ChunkSize;
+        int cx = x / Settings.ChunkSize;
+        int cy = y / Settings.ChunkSize;
         return new Vector2Int(cx,cy);
     }
 }

@@ -2,21 +2,21 @@ using UnityEngine;
 
 public class PlayerGroundState : PlayerActiveState
 {
-    public PlayerGroundState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory) : base(currentContext, playerStateFactory)
+    public PlayerGroundState(Player player, PlayerStateFactory playerStateFactory) : base(player, playerStateFactory)
     {
     }
 
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (Time.time < _ctx.Controller.JumpPressedTime + _ctx.Controller.Config.JumpBuffor) 
+        if (Time.time < _player.Inputs.JumpPressedTime + _player.Config.JumpBuffor) 
         {
-            _ctx.SwitchState(_factory.Jump);
+            _player.States.SwitchState(_factory.Jump);
             return;
         }
-        if (Time.time > _ctx.Controller.LastGroundedTime + _ctx.Controller.Config.CoyoteTime)
+        if (Time.time > _player.Controller.LastGroundedTime + _player.Config.CoyoteTime)
         {
-            _ctx.SwitchState(_factory.Fall);
+            _player.States.SwitchState(_factory.Fall);
             return;
         }
     }
@@ -34,14 +34,9 @@ public class PlayerGroundState : PlayerActiveState
     public override void FixedUpdateState()
     {
         base.FixedUpdateState();
-        if(Mathf.Abs(_ctx.Controller.MovementInput.x) > 0.1f){
-            float targetSpeed = Mathf.Sign(_ctx.Controller.MovementInput.x) * _ctx.Controller.Config.MoveSpeed;
-            _ctx.Controller.RB.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.RB.linearVelocityX, targetSpeed, _ctx.Controller.Config.AccelerationSpeed * _ctx.Controller.Config.MoveSpeed);
-            _ctx.Controller.TryStepUp(_ctx.Controller.MovementInput.x);
-        }
-        else
-        {
-            _ctx.Controller.RB.linearVelocityX = Mathf.MoveTowards(_ctx.Controller.RB.linearVelocityX, 0f, _ctx.Controller.Config.StoppingSpeed * _ctx.Controller.Config.MoveSpeed);
+        ApplyStandardMovement(_player.Config.AccelerationSpeed, _player.Config.StoppingSpeed);
+        if(Mathf.Abs(_player.Inputs.MovementInput.x) > 0.1f){
+            _player.Controller.TryStepUp(_player.Inputs.MovementInput.x);
         }
     }
 

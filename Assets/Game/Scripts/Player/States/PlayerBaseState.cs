@@ -1,22 +1,22 @@
 using UnityEngine;
 public abstract class PlayerBaseState
 {
-    protected PlayerStateMachine _ctx; // Kontekst (dostęp do gracza)
-    protected PlayerStateFactory _factory; // Dostęp do innych stanów
+    protected Player _player;
+    protected PlayerStateFactory _factory;
 
     [Header("Booleans")]
     public virtual bool CanPerformActions => false;
     public virtual bool CanSetSlot => false;
 
-    public PlayerBaseState(PlayerStateMachine currentContext, PlayerStateFactory playerStateFactory)
+    public PlayerBaseState(Player player, PlayerStateFactory factory)
     {
-        _ctx = currentContext;
-        _factory = playerStateFactory;
+        _player = player;
+        _factory = factory;
     }
 
     public abstract void EnterState();
     public abstract void UpdateState();
-    public abstract void FixedUpdateState(); // Do fizyki
+    public abstract void FixedUpdateState();
     public abstract void ExitState();
-    public abstract void CheckSwitchStates(); // Tutaj decydujemy o zmianie
+    public abstract void CheckSwitchStates();
 }
