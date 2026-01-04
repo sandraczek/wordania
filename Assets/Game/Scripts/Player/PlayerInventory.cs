@@ -15,7 +15,7 @@ public class PlayerInventory : MonoBehaviour
     }
     private void Update()
     {
-        _dirtPowderAmount = _player.Inventory.GetQuantity(1);
+        _dirtPowderAmount = _player.Inventory.GetQuantity(1);  //temporary
     }
     private void OnEnable() {
         _lootChannel.Subscribe(HandleLoot);

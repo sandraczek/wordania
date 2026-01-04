@@ -24,13 +24,13 @@ public class PlayerInteraction : MonoBehaviour
     public void OnEnable()
     {
         _player.Inputs.OnHotbarSlotPressed += SetTool;
-        _player.Inputs.OnCycleActionSetting += CycleToolSetting;
+        _player.Inputs.OnCycleActionSettings += CycleToolSetting;
         _player.Inputs.OnPrimaryActionHeld += SetPrimaryActionHeld;
     }
     public void OnDisable()
     {
         _player.Inputs.OnHotbarSlotPressed -= SetTool;
-        _player.Inputs.OnCycleActionSetting -= CycleToolSetting;
+        _player.Inputs.OnCycleActionSettings -= CycleToolSetting;
         _player.Inputs.OnPrimaryActionHeld -= SetPrimaryActionHeld;
     }
     public void Update()

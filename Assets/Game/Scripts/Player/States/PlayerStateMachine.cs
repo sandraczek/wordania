@@ -33,4 +33,15 @@ public class PlayerStateMachine : MonoBehaviour
         CurrentState = newState;
         CurrentState.EnterState();
     }
+    public void ToggleInMenuState(bool isEnteringMenu)
+    {
+        if (isEnteringMenu)
+        {
+            SwitchState(_factory.InMenu); 
+        }
+        else
+        {
+            SwitchState(_factory.Idle);
+        }
+    }
 }

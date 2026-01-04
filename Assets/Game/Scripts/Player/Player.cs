@@ -2,11 +2,9 @@ using UnityEngine;
 
 [RequireComponent(typeof(PlayerStateMachine))]
 [RequireComponent(typeof(PlayerController))]
-[RequireComponent(typeof(InputReader))]
 public class Player : MonoBehaviour
 {
-    private InputReader _inputs;
-    public InputReader Inputs => _inputs = _inputs != null ? _inputs : GetComponent<InputReader>();
+    public InputReader Inputs;
 
     private PlayerController _controller;
     public PlayerController Controller => _controller = _controller != null ? _controller : GetComponent<PlayerController>();

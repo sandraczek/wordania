@@ -5,13 +5,12 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
-[RequireComponent(typeof(InputReader))]
 public class PlayerController : MonoBehaviour
 {
     [field: Header("References")]
     private Rigidbody2D _rb;
     private BoxCollider2D _col;
-    private InputReader _inputs;
+    [SerializeField] private InputReader _inputs;
     [field: SerializeField] private WorldSettings _settings;
     private PlayerConfig _config;
     
@@ -29,7 +28,6 @@ public class PlayerController : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _col = GetComponent<BoxCollider2D>();
-        _inputs = GetComponent<InputReader>();
     }
     public void Start()
     {

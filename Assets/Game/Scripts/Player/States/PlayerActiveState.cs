@@ -34,18 +34,18 @@ public class PlayerActiveState : PlayerBaseState
     }
 
     protected void ApplyStandardMovement(float acceleration, float deceleration, float speedMultiplier = 1f)
-{
-    float xInput = _player.Inputs.MovementInput.x;
-    float targetSpeed = xInput * _player.Config.MoveSpeed;
-    
-    float currentAccel = (Mathf.Abs(xInput) > 0.1f) ? acceleration : deceleration;
+    {
+        float xInput = _player.Inputs.MovementInput.x;
+        float targetSpeed = xInput * _player.Config.MoveSpeed;
+        
+        float currentAccel = (Mathf.Abs(xInput) > 0.1f) ? acceleration : deceleration;
 
-    float newVelocityX = Mathf.MoveTowards(
-        _player.Controller.GetVelocityX(), 
-        targetSpeed, 
-        currentAccel * _player.Config.MoveSpeed * speedMultiplier
-    );
+        float newVelocityX = Mathf.MoveTowards(
+            _player.Controller.GetVelocityX(), 
+            targetSpeed, 
+            currentAccel * _player.Config.MoveSpeed * speedMultiplier
+        );
 
-    _player.Controller.SetVelocityX(newVelocityX);
-}
+        _player.Controller.SetVelocityX(newVelocityX);
+    }
 }
