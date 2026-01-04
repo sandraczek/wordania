@@ -6,16 +6,20 @@ using System.Data;
 [RequireComponent(typeof(WorldGenerator))]
 public class WorldManager : MonoBehaviour
 {
-    [SerializeField] private BlockDatabase _blockDatabase;
+    private BlockDatabase _blockDatabase;
     public WorldData WorldData {get; private set;}
     public WorldSettings Settings;
     private WorldGenerator _generator;
     [SerializeField] private WorldRenderer _renderer;
+    [SerializeField] private LootEvent _lootEvent;
     public void Awake()
     {
-        _blockDatabase.Initialize();
         _generator = GetComponent<WorldGenerator>();
         _renderer.Initialize(Settings);
+    }
+    public void Initialize(BlockDatabase database)
+    {
+        _blockDatabase = database;
     }
     public void StartWorldGeneration()
     {
@@ -46,6 +50,7 @@ public class WorldManager : MonoBehaviour
             WorldData.TileArray[x,y].Damage = 0f; 
 
             //DROPPING LOOT
+            _lootEvent.Raise(data.loot, data.lootAmount);
 
             changedLayers = WorldLayer.Main | WorldLayer.Damage;
         }

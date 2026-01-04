@@ -9,7 +9,7 @@ using System;
 using UnityEditor;
 #endif
 
-[CreateAssetMenu(menuName = "Block Database")]
+[CreateAssetMenu(fileName = "BlockDatabase", menuName = "World/Block Database")]
 public class BlockDatabase : ScriptableObject
 {
     public List<BlockData> allBlocks;
@@ -61,9 +61,9 @@ public class BlockDatabase : ScriptableObject
             }
         }
         
-        Debug.Log($"Sukces! Znaleziono i dodano {allBlocks.Count} bloków do bazy.");
+        Debug.Log($"Success! Found and added {allBlocks.Count} blocks to database.");
         
         EditorUtility.SetDirty(this); 
     }
-#endif
+    #endif
 }

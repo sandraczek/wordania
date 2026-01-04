@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Player))]
 public class PlayerInteraction : MonoBehaviour
 {
     private Player _player;
@@ -14,17 +15,12 @@ public class PlayerInteraction : MonoBehaviour
     [field: SerializeField] private float _areaRadius = 1.5f;
     [Header("Building")]
     [SerializeField] private BlockData _buildingBlock;
-    private enum InteractionMode
-    {
-        mine,
-        build
-    }
+    private InteractionMode _interactionMode = InteractionMode.build;
     public void Awake()
     {
         _player = GetComponent<Player>();
         _nextActionTime = 0f;
     }
-    private InteractionMode _interactionMode = InteractionMode.build;
     public void OnEnable()
     {
         _player.Inputs.OnHotbarSlotPressed += SetTool;
@@ -53,18 +49,38 @@ public class PlayerInteraction : MonoBehaviour
         if (deltaRoundX > _actionRange || deltaRoundY > _actionRange) return false;
         switch (_interactionMode){
             case InteractionMode.build:
-                if(!worldManager.TryPlaceBlock(targetWorldPos, _buildingBlock.ID)) return false;
+                if(!TryBuild(targetWorldPos)) return false;
                 break;
             case InteractionMode.mine:
-                if(!_areaMine){
-                    if(!worldManager.TryDamageBlock(targetWorldPos, _minePower)) return false;
-                }
-                else{
-                    if(!worldManager.TryDamageCircle(targetWorldPos, _areaRadius, _minePower)) return false;
-                }
+                TryMine(targetWorldPos);  // Interaction even if didnt mine anything
                 break;
         }
         _nextActionTime = Time.time + _actionRate;
+        return true;
+    }
+    private bool TryBuild(Vector2 targetWorldPos)
+    {
+        if (_buildingBlock == null) return false;
+        foreach (Ingredient ingredient in _buildingBlock.recipe.Requirements){
+            if (_player.Inventory.GetQuantity(ingredient.item.Id) < ingredient.amount) return false;
+        }
+
+        if(!worldManager.TryPlaceBlock(targetWorldPos, _buildingBlock.ID)) return false;
+
+        foreach (Ingredient ingredient in _buildingBlock.recipe.Requirements){
+            Debug.Assert(_player.Inventory.TryRemoveItem(ingredient.item, ingredient.amount));
+        }
+
+        return true;
+    }
+    private bool TryMine(Vector2 targetWorldPos)
+    {
+        if(!_areaMine){
+            if(!worldManager.TryDamageBlock(targetWorldPos, _minePower)) return false;
+        }
+        else{
+            if(!worldManager.TryDamageCircle(targetWorldPos, _areaRadius, _minePower)) return false;
+        }
         return true;
     }
     public void CycleToolSetting()
@@ -95,5 +111,11 @@ public class PlayerInteraction : MonoBehaviour
     private void SetPrimaryActionHeld(bool boo)
     {
         _isPrimaryActionHeld = boo;
+    }
+
+    private enum InteractionMode
+    {
+        mine,
+        build
     }
 }

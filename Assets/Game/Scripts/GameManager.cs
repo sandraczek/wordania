@@ -3,9 +3,16 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private BlockDatabase _blockDatabase;
+    [SerializeField] private ItemDatabase _itemDatabase;
     [SerializeField] private WorldManager _worldManager;
     [SerializeField] private PlayerController _player;
 
+    void Awake()
+    {
+        _blockDatabase.Initialize();
+        _itemDatabase.Initialize();
+        _worldManager.Initialize(_blockDatabase);
+    }
     void Start() 
     {
         _worldManager.StartWorldGeneration();

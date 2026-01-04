@@ -283,9 +283,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4150990dcb9e94d639c512dd527790b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  _blockDatabase: {fileID: 11400000, guid: 081207bfca7514f3a8b67a5ab77d494f, type: 2}
   Settings: {fileID: 11400000, guid: 8bd3fd8847cad47b0bfd36f0478e773f, type: 2}
   _renderer: {fileID: 1129551207}
+  _lootEvent: {fileID: 11400000, guid: e9dd6b62f048c413fa1bd4e0d2e67a82, type: 2}
 --- !u!4 &512467338
 Transform:
   m_ObjectHideFlags: 0
@@ -421,7 +421,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 33.75
+  orthographic size: 26.96875
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -667,6 +667,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   _blockDatabase: {fileID: 11400000, guid: 081207bfca7514f3a8b67a5ab77d494f, type: 2}
+  _itemDatabase: {fileID: 11400000, guid: b9d9d6775118e424d9cf6b9b6e084732, type: 2}
   _worldManager: {fileID: 512467337}
   _player: {fileID: 1689419397}
 --- !u!4 &703410366
@@ -859,10 +860,11 @@ GameObject:
   - component: {fileID: 1689419398}
   - component: {fileID: 1689419399}
   - component: {fileID: 1689419403}
+  - component: {fileID: 1689419402}
   - component: {fileID: 1689419397}
   - component: {fileID: 1689419400}
   - component: {fileID: 1689419401}
-  - component: {fileID: 1689419402}
+  - component: {fileID: 1689419404}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -924,9 +926,9 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!61 &1689419399
 BoxCollider2D:
@@ -973,7 +975,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Size: {x: 2.4, y: 5.4}
-  m_EdgeRadius: 0.02
+  m_EdgeRadius: 0
 --- !u!114 &1689419400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1017,7 +1019,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c146f582d14e749a2ab3e3b23b14c9ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  Config: {fileID: 11400000, guid: 901fcaec161494086a973499fd3c0f7e, type: 2}
+  <Config>k__BackingField: {fileID: 11400000, guid: 901fcaec161494086a973499fd3c0f7e, type: 2}
+  <Inventory>k__BackingField: {fileID: 11400000, guid: 009fe1e22c8ca4871b1fd24d08ef7045, type: 2}
 --- !u!114 &1689419403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1032,6 +1035,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InputReader
   <MovementInput>k__BackingField: {x: 0, y: 0}
   <CursorScreenPosition>k__BackingField: {x: 0, y: 0}
+--- !u!114 &1689419404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1689419395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8310ddc51023a4f95a1c0d7be1c2bdb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
+  _lootChannel: {fileID: 11400000, guid: e9dd6b62f048c413fa1bd4e0d2e67a82, type: 2}
+  _dirtPowderAmount: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1042,5 +1059,5 @@ SceneRoots:
   - {fileID: 703410366}
   - {fileID: 634169252}
   - {fileID: 512467338}
-  - {fileID: 1689419396}
   - {fileID: 1129551206}
+  - {fileID: 1689419396}

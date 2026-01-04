@@ -1,18 +1,22 @@
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerStateMachine))]
+[RequireComponent(typeof(PlayerController))]
+[RequireComponent(typeof(InputReader))]
 public class Player : MonoBehaviour
 {
-    public PlayerStateMachine States {get; private set;}
-    public PlayerController Controller {get; private set;}
-    public InputReader Inputs {get; private set;}
-    [field: SerializeField] public PlayerConfig Config;
+    private InputReader _inputs;
+    public InputReader Inputs => _inputs = _inputs != null ? _inputs : GetComponent<InputReader>();
+
+    private PlayerController _controller;
+    public PlayerController Controller => _controller = _controller != null ? _controller : GetComponent<PlayerController>();
+
+    private PlayerStateMachine _states;
+    public PlayerStateMachine States => _states = _states != null ? _states : GetComponent<PlayerStateMachine>();
+    [field:SerializeField] public PlayerConfig Config {get; private set;}
+    [field:SerializeField] public InventoryData Inventory {get; private set;}
     public void Awake()
     {
-        States = GetComponent<PlayerStateMachine>();
-        Controller = GetComponent<PlayerController>();
-        Inputs = GetComponent<InputReader>();
-
         Controller.Initialize(Config);
-        // ZROBIC TO SAMO W WORLD MANAGERZE (tylko jeden world config)
     }
 }

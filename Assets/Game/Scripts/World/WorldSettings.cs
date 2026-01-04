@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "WorldSettings", menuName = "WorldSettings")]
+[CreateAssetMenu(fileName = "WorldSettings", menuName = "World/WorldSettings")]
 public class WorldSettings : ScriptableObject
 {
     public float TileSize = 1f;
