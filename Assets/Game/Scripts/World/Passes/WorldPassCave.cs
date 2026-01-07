@@ -22,10 +22,10 @@ public class WorldPassCave : IWorldGenerationPass
 
                 if (combinedNoise > settings.GlobalCaveDensity || tunnelValue < settings.TunnelThreshold * depthMask)
                 {
-                    if (data.TileArray[x, y].Main != 0)
+                    if (data.GetTile(x,y).Main != 0)
                     {
                         // data.TileArray[x, y].Background = 2;
-                        data.TileArray[x, y].Main = 0;
+                        data.GetTile(x,y).Main = 0;
                     }
                 }
             }

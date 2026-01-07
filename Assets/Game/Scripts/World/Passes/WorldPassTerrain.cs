@@ -12,11 +12,11 @@ public class WorldPassTerrain : IWorldGenerationPass
             {
                 if (y < terrainHeight)
                 {
-                    data.TileArray[x, y].Main = 1;
+                    data.GetTile(x,y).Main = 1;
                 }
                 else
                 {
-                    data.TileArray[x, y].Main = 0;
+                    data.GetTile(x,y).Main = 0;
                 }
             }
         }

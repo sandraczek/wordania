@@ -619,7 +619,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 26.96875
+  orthographic size: 2
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -949,7 +949,7 @@ MonoBehaviour:
   _worldManager: {fileID: 512467337}
   _player: {fileID: 1689419402}
   _saveManager: {fileID: 1032886528}
-  saveSlot: 2
+  saveSlot: 1
 --- !u!4 &703410366
 Transform:
   m_ObjectHideFlags: 0

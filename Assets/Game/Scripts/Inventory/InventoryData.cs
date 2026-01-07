@@ -27,10 +27,8 @@ public class InventoryData : ScriptableObject
     }
     public void AddItem(int id, int amount)
     {
-        Debug.Log(id + ".1");
         ItemData data = _database.GetItem(id);
         if (data == null || amount <= 0) return;
-        Debug.Log(id + ".2");
         if (_content.TryGetValue(data.Id, out InventoryEntry entry))
         {
             entry.Add(amount);
@@ -65,5 +63,25 @@ public class InventoryData : ScriptableObject
     public void ClearInventory()
     {
         _content.Clear();
+    }
+    public List<ItemSaveData> SaveInventory()
+    {
+        List<ItemSaveData> data = new();
+        foreach (var item in GetAllEntries())
+        {
+            if (item.Quantity > 0)
+            {
+                data.Add(new ItemSaveData { id = item.Data.Id, amount = item.Quantity });
+            }
+        }
+        return data;
+    }
+    public void LoadInventory(List<ItemSaveData> items)
+    {
+        _content.Clear();
+        foreach (var item in items)
+        {
+            AddItem(item.id, item.amount);
+        }
     }
 }

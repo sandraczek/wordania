@@ -13,8 +13,21 @@ public class Player : MonoBehaviour
     public PlayerStateMachine States => _states = _states != null ? _states : GetComponent<PlayerStateMachine>();
     [field:SerializeField] public PlayerConfig Config {get; private set;}
     [field:SerializeField] public InventoryData Inventory {get; private set;}
+    private PlayerData _data;
+    public PlayerData Data { get 
+    {
+        _data.SetPosition(transform.position); 
+        return _data;
+    } }
+
     public void Awake()
     {
         Controller.Initialize(Config);
+        _data = new();
+    }
+    public void LoadData(PlayerData data)
+    {
+        _data = data;
+        _controller.Warp(_data.Position);
     }
 }

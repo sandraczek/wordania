@@ -6,6 +6,14 @@ using UnityEngine.InputSystem;
 public class InputReader : ScriptableObject, GameInput.IPlayerActions
 {
     private GameInput _inputActions;
+    public GameInput InputActions
+    {
+        get
+        {
+            if(_inputActions == null) Initialize();
+            return _inputActions;
+        }
+    }
 
     // --- Properties ---
     [field: SerializeField] public Vector2 MovementInput { get; private set; }
@@ -21,12 +29,14 @@ public class InputReader : ScriptableObject, GameInput.IPlayerActions
 
     private void OnEnable()
     {
-        if (_inputActions == null)
-        {
-            _inputActions = new GameInput();
-            
-            _inputActions.Player.SetCallbacks(this);
-        }
+        Initialize();
+    }
+    private void Initialize()
+    {
+        if (_inputActions != null) return;
+        _inputActions = new GameInput();
+        
+        _inputActions.Player.SetCallbacks(this);
         EnablePlayerInput();
     }
 

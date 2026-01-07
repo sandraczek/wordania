@@ -7,7 +7,7 @@ using System.Data;
 public class WorldManager : MonoBehaviour
 {
     private BlockDatabase _blockDatabase;
-    public WorldData WorldData {get; private set;}
+    public WorldData Data {get; private set;}
     public WorldSettings Settings;
     private WorldGenerator _generator;
     [SerializeField] private WorldRenderer _renderer;
@@ -23,9 +23,17 @@ public class WorldManager : MonoBehaviour
     }
     public void StartWorldGeneration()
     {
-        WorldData = _generator.GenerateWorld(Settings);
+        Debug.Assert(Data == null);
+        Data = _generator.GenerateWorld(Settings);
         _renderer.CreateChunks();
-        _renderer.RenderWorld(WorldData);
+        _renderer.RenderWorld(Data);
+    }
+    public void LoadWorldData(WorldData data)
+    {
+        Debug.Assert(Data == null);
+        Data = data;
+        _renderer.CreateChunks();
+        _renderer.RenderWorld(Data);
     }
     public bool TryDamageBlock(Vector3 worldPosition, float damagePower)
     {
@@ -41,13 +49,13 @@ public class WorldManager : MonoBehaviour
     public WorldLayer DamageTile(int x, int y, float damagePower)
     {
         if(!IsWithinBounds(x,y)) return WorldLayer.None;
-        BlockData data = _blockDatabase.GetBlock(WorldData.TileArray[x,y].Main);
+        BlockData data = _blockDatabase.GetBlock(Data.GetTile(x,y).Main);
         if(data == null) return WorldLayer.None;
-        WorldData.TileArray[x,y].Damage += damagePower / data.Hardness;
+        Data.GetTile(x,y).Damage += damagePower / data.Hardness;
         WorldLayer changedLayers;
-        if(WorldData.TileArray[x,y].Damage >= 1f){
-            WorldData.TileArray[x,y].Main = 0;
-            WorldData.TileArray[x,y].Damage = 0f; 
+        if(Data.GetTile(x,y).Damage >= 1f){
+            Data.GetTile(x,y).Main = 0;
+            Data.GetTile(x,y).Damage = 0f; 
 
             //DROPPING LOOT
             _lootEvent.Raise(data.loot, data.lootAmount);
@@ -115,7 +123,7 @@ public class WorldManager : MonoBehaviour
     {
         Vector2Int pos = Settings.WorldToGrid(worldPosition);
         if (!IsWithinBounds(pos.x, pos.y)) return false;
-        if(_blockDatabase.GetBlock(WorldData.TileArray[pos.x,pos.y].Main) != null) return false;
+        if(_blockDatabase.GetBlock(Data.GetTile(pos.x,pos.y).Main) != null) return false;
         Vector3 cellCenter = Settings.GridToWorld(pos.x,pos.y);
         Vector2 checkSize = new(0.9f, 0.9f);
 
@@ -123,7 +131,7 @@ public class WorldManager : MonoBehaviour
 
         if (hit != null) return false;
 
-        WorldData.TileArray[pos.x,pos.y].Main = blockID;
+        Data.GetTile(pos.x,pos.y).Main = blockID;
         Vector2Int coord = GetChunkCoord(pos.x, pos.y);
         _renderer.ChunkRefresh(coord, WorldLayer.Main);
         return true;
@@ -131,7 +139,7 @@ public class WorldManager : MonoBehaviour
 
     public TileBase GetTileBase(int x, int y, WorldLayer layer)
     {
-        TileData data = WorldData.TileArray[x, y];
+        TileData data = Data.GetTile(x,y);
         int id = 0;
 
         if (layer == WorldLayer.Main) id = data.Main;

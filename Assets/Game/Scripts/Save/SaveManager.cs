@@ -1,40 +1,61 @@
 using UnityEngine;
+using System.IO;
 public class SaveManager : MonoBehaviour
 {
-    [SerializeField] private Player _player;
+    // public SaveManager Instance;
+    private string saveFilePrefix = "SaveSlot_";
 
-    [ContextMenu("Save")]
-    public void SaveGame()
+    public void Awake()
     {
-        SaveData data = new();
-
-        data.PlayerPosition = _player.transform.position;
-        data.SaveDate = System.DateTime.Now.ToString();
-
-        foreach (var item in _player.Inventory.GetAllEntries())
-        {
-            if (item.Quantity > 0)
-            {
-                data.Inventory.Add(new ItemSaveData { id = item.Data.Id, amount = item.Quantity });
-            }
-        }
-
-        FileHandler.SaveJSON(data, "SaveSlot_1");
+        // if(Instance == null)
+        // {
+        //     Instance = this;
+        // }
+        // else
+        // {
+        //     Destroy(gameObject);
+        // }
     }
-    [ContextMenu("Load")]
-    public void LoadGame()
+    public void Save(SaveData data, int slotIndex)
     {
-        SaveData data = FileHandler.LoadJSON<SaveData>("SaveSlot_1");
-        if (data == null) return;
+        SaveJSON(data, saveFilePrefix + slotIndex.ToString());
+    }
+    public SaveData Load(int slotIndex)
+    {
+        return LoadJSON<SaveData>(saveFilePrefix + slotIndex.ToString());
+    }
+    public void DeleteSaveFile(int slotIndex)
+    {
+        string fileName = saveFilePrefix + slotIndex.ToString() + ".json";
+        string path = Path.Combine(Application.persistentDataPath, fileName);
 
-        _player.transform.position = data.PlayerPosition;
-
-        _player.Inventory.ClearInventory();
-        foreach (var item in data.Inventory)
+        if (File.Exists(path))
         {
-            _player.Inventory.AddItem(item.id, item.amount);
+            File.Delete(path);
+            Debug.Log($"Save file {fileName} deleted.");
         }
-        
-        Debug.Log("Game loaded successfully.");
+        else
+        {
+            Debug.LogWarning("Tried deleting a non-existent save file.");
+        }
+    }
+
+    private string GetPath(string fileName) 
+        => Path.Combine(Application.persistentDataPath, fileName + ".json");
+
+    public void SaveJSON<T>(T data, string fileName)
+    {
+        string json = JsonUtility.ToJson(data, true);
+        File.WriteAllText(GetPath(fileName), json);
+        Debug.Log($"Saved to: {GetPath(fileName)}");
+    }
+
+    public T LoadJSON<T>(string fileName)
+    {
+        string path = GetPath(fileName);
+        if (!File.Exists(path)) return default;
+
+        string json = File.ReadAllText(path);
+        return JsonUtility.FromJson<T>(json);
     }
 }

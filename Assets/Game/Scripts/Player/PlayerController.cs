@@ -56,8 +56,8 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 delta = targetPosition - transform.position;
 
-        _rb.linearVelocity = Vector2.zero;
         transform.position = targetPosition;
+        _rb.linearVelocity = Vector2.zero;
 
         OnPlayerWarped?.Invoke(delta);
     }

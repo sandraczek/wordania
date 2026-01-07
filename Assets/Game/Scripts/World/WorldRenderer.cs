@@ -52,7 +52,7 @@ public class WorldRenderer : MonoBehaviour
 
                         if (worldX < _settings.Width && worldY < _settings.Height)
                         {
-                            int id = data.TileArray[worldX, worldY].Main;
+                            int id = data.GetTile(worldX, worldY).Main;
                             if (id != 0)
                             {
                                 chunkTiles[lx + ly * chunkSize] = _blockDatabase.GetBlock(id).Tile;
@@ -61,6 +61,8 @@ public class WorldRenderer : MonoBehaviour
                             {
                                 chunkTiles[lx + ly * chunkSize] = null;
                             }
+
+                            // Now we only render main tilemap
                         }
                     }
                 }

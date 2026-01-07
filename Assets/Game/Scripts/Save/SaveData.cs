@@ -5,10 +5,11 @@ using UnityEngine;
 [Serializable]
 public class SaveData
 {
-    public Vector2 PlayerPosition;
+    public WorldData worldData;
+    public PlayerData playerData;
 
     public List<ItemSaveData> Inventory = new();
-
+    
     public string SaveDate;
     public int SaveVersion = 1;
 }
