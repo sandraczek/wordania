@@ -9,6 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e8ec60ed40c14cf080d02f01df674be, type: 3}
-  m_Name: PlayerInventory
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryData
+  m_Script: {fileID: 11500000, guid: 1418f87e876274594811b519a7fc1249, type: 3}
+  m_Name: Dirt_Block_Recipe
+  m_EditorClassIdentifier: Assembly-CSharp::Recipe
+  _requirements:
+  - item: {fileID: 11400000, guid: 05fd660022b5149439cee3fefa678988, type: 2}
+    amount: 4

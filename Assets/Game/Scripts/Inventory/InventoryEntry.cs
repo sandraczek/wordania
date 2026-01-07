@@ -17,17 +17,17 @@ public class InventoryEntry
     }
 
     public void Add(int amount) 
-{
-    _quantity = Mathf.Min(_quantity + amount, _data.MaxStackSize);
-}
+    {
+        _quantity = Mathf.Min(_quantity + amount, _data.MaxStackSize);
+    }
 
-public bool TryRemove(int amount) 
-{
-    if (_quantity < amount) return false;
-    
-    _quantity -= amount;
-    return true;
-}
+    public bool TryRemove(int amount) 
+    {
+        if (_quantity < amount) return false;
+        
+        _quantity -= amount;
+        return true;
+    }
     
     public bool IsFull => _quantity >= _data.MaxStackSize;
 }

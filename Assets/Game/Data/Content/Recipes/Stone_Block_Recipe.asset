@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1418f87e876274594811b519a7fc1249, type: 3}
-  m_Name: Recipe_Block_Dirt
+  m_Name: Stone_Block_Recipe
   m_EditorClassIdentifier: Assembly-CSharp::Recipe
   _requirements:
-  - item: {fileID: 11400000, guid: 05fd660022b5149439cee3fefa678988, type: 2}
+  - item: {fileID: 11400000, guid: 746469d7d4efc41b4954a7764d80960e, type: 2}
     amount: 4

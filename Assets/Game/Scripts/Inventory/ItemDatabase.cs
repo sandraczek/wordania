@@ -24,6 +24,7 @@ public class ItemDatabase : ScriptableObject
     {
         if(id==0) return null;
         if (_itemMap.TryGetValue(id, out var item)) return item;
+        else Debug.LogError("No id " + id + "in item database");
         return null;
     }
 

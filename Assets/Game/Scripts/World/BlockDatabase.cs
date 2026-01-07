@@ -29,6 +29,7 @@ public class BlockDatabase : ScriptableObject
     {
         if(id==0) return null;
         if (_blockMap.TryGetValue(id, out var block)) return block;
+        else Debug.LogError("No id " + id + "in block database");
         return null;
     }
     public TileBase GetCracks(float damage)

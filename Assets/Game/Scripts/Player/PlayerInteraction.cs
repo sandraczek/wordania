@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Player))]
@@ -14,7 +15,8 @@ public class PlayerInteraction : MonoBehaviour
     [field: SerializeField] private bool _areaMine = false;
     [field: SerializeField] private float _areaRadius = 1.5f;
     [Header("Building")]
-    [SerializeField] private BlockData _buildingBlock;
+    [SerializeField] private int _currentBlockIndex;
+    [SerializeField] private BlockData[] _buildingBlocks;
     private InteractionMode _interactionMode = InteractionMode.build;
     public void Awake()
     {
@@ -60,14 +62,14 @@ public class PlayerInteraction : MonoBehaviour
     }
     private bool TryBuild(Vector2 targetWorldPos)
     {
-        if (_buildingBlock == null) return false;
-        foreach (Ingredient ingredient in _buildingBlock.recipe.Requirements){
+        if (_buildingBlocks[_currentBlockIndex] == null) return false;
+        foreach (Ingredient ingredient in _buildingBlocks[_currentBlockIndex].recipe.Requirements){
             if (_player.Inventory.GetQuantity(ingredient.item.Id) < ingredient.amount) return false;
         }
 
-        if(!worldManager.TryPlaceBlock(targetWorldPos, _buildingBlock.ID)) return false;
+        if(!worldManager.TryPlaceBlock(targetWorldPos, _buildingBlocks[_currentBlockIndex].ID)) return false;
 
-        foreach (Ingredient ingredient in _buildingBlock.recipe.Requirements){
+        foreach (Ingredient ingredient in _buildingBlocks[_currentBlockIndex].recipe.Requirements){
             Debug.Assert(_player.Inventory.TryRemoveItem(ingredient.item, ingredient.amount));
         }
 
@@ -91,6 +93,8 @@ public class PlayerInteraction : MonoBehaviour
                 _areaMine = !_areaMine;
                 break;
             case InteractionMode.build:
+                _currentBlockIndex+=1;
+                _currentBlockIndex%=_buildingBlocks.Count();
                 break;
         }
     }

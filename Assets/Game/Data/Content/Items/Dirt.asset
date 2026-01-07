@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e7104540dfe63468ca71c008b534182e, type: 3}
-  m_Name: DirtPowder
+  m_Name: Dirt
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   _id: 1
-  _displayName: dirt powder
+  _displayName: dirt
   _icon: {fileID: 7421049344666713335, guid: f89c352719dfe534d97cd12e2f79bb7e, type: 3}
   _maxStackSize: 9999

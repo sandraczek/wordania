@@ -5,17 +5,10 @@ public class PlayerInventory : MonoBehaviour
 {
     private Player _player;
     [SerializeField] private LootEvent _lootChannel;
-    
-    //temporary
-    [SerializeField] private int _dirtPowderAmount;
 
     private void Awake()
     {
         _player = GetComponent<Player>();
-    }
-    private void Update()
-    {
-        _dirtPowderAmount = _player.Inventory.GetQuantity(1);  //temporary
     }
     private void OnEnable() {
         _lootChannel.Subscribe(HandleLoot);

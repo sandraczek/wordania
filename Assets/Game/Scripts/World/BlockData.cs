@@ -5,8 +5,7 @@ using UnityEngine.Tilemaps;
 public class BlockData : ScriptableObject
 {
     [Header("Id")]
-    public int ID;
-    public string DisplayName;
+    public int ID = -1;
 
     [Header("Visual")]
     public TileBase Tile;

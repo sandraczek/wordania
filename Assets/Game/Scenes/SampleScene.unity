@@ -619,7 +619,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 26.96875
+  orthographic size: 24.21875
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1178,6 +1178,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 990882304}
   m_CullTransparentMesh: 1
+--- !u!1 &1032886527
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1032886529}
+  - component: {fileID: 1032886528}
+  m_Layer: 0
+  m_Name: SaveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1032886528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1032886527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d373cfcee42ee4938a58c0f447e3d27b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveManager
+  _player: {fileID: 1689419402}
+--- !u!4 &1032886529
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1032886527}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 566.5534, y: 506.22403, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1094032247
 GameObject:
   m_ObjectHideFlags: 0
@@ -1730,7 +1775,10 @@ MonoBehaviour:
   _minePower: 1
   _areaMine: 0
   _areaRadius: 1.5
-  _buildingBlock: {fileID: 11400000, guid: 870dc9c10be2f458e89e1ae626b4996f, type: 2}
+  _currentBlockIndex: 0
+  _buildingBlocks:
+  - {fileID: 11400000, guid: 870dc9c10be2f458e89e1ae626b4996f, type: 2}
+  - {fileID: 11400000, guid: 8cc2b06d3b0d74b83a7af0d6cd947d9d, type: 2}
 --- !u!114 &1689419402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1759,7 +1807,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
   _lootChannel: {fileID: 11400000, guid: e9dd6b62f048c413fa1bd4e0d2e67a82, type: 2}
-  _dirtPowderAmount: 0
 --- !u!1 &2122696541
 GameObject:
   m_ObjectHideFlags: 0
@@ -1844,10 +1891,11 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 290940329}
   - {fileID: 619394802}
+  - {fileID: 653986383}
   - {fileID: 703410366}
   - {fileID: 634169252}
   - {fileID: 512467338}
+  - {fileID: 1032886529}
   - {fileID: 1129551206}
   - {fileID: 1689419396}
   - {fileID: 1587768733}
-  - {fileID: 653986383}
