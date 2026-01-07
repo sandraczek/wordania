@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerInteraction : MonoBehaviour
 {
     private Player _player;
-    [field:SerializeField] private WorldManager worldManager;
+    [field:SerializeField] private WorldManager _worldManager;
     private bool _isPrimaryActionHeld = false;
     [SerializeField] private float _actionRange = 6f;
     [field: SerializeField] private float _actionRate = 0.05f;
@@ -22,6 +22,10 @@ public class PlayerInteraction : MonoBehaviour
     {
         _player = GetComponent<Player>();
         _nextActionTime = 0f;
+    }
+    public void InitializeWorldManager(WorldManager manager)
+    {
+        _worldManager = manager;
     }
     public void OnEnable()
     {
@@ -67,7 +71,7 @@ public class PlayerInteraction : MonoBehaviour
             if (_player.Inventory.GetQuantity(ingredient.item.Id) < ingredient.amount) return false;
         }
 
-        if(!worldManager.TryPlaceBlock(targetWorldPos, _buildingBlocks[_currentBlockIndex].ID)) return false;
+        if(!_worldManager.TryPlaceBlock(targetWorldPos, _buildingBlocks[_currentBlockIndex].ID)) return false;
 
         foreach (Ingredient ingredient in _buildingBlocks[_currentBlockIndex].recipe.Requirements){
             Debug.Assert(_player.Inventory.TryRemoveItem(ingredient.item, ingredient.amount));
@@ -78,10 +82,10 @@ public class PlayerInteraction : MonoBehaviour
     private bool TryMine(Vector2 targetWorldPos)
     {
         if(!_areaMine){
-            if(!worldManager.TryDamageBlock(targetWorldPos, _minePower)) return false;
+            if(!_worldManager.TryDamageBlock(targetWorldPos, _minePower)) return false;
         }
         else{
-            if(!worldManager.TryDamageCircle(targetWorldPos, _areaRadius, _minePower)) return false;
+            if(!_worldManager.TryDamageCircle(targetWorldPos, _areaRadius, _minePower)) return false;
         }
         return true;
     }

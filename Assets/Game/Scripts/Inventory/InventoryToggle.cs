@@ -1,7 +1,7 @@
 using UnityEngine;
 public class InventoryToggle : MonoBehaviour
 {
-    [SerializeField] private Player _player;
+    [SerializeField] private GameManager _gameManager;
     [SerializeField] private GameObject _inventoryPanel;
     [SerializeField] private InputReader _inputReader;
 
@@ -42,12 +42,12 @@ public class InventoryToggle : MonoBehaviour
     private void OnOpen()
     {
         Time.timeScale = 0f;
-        _player.States.ToggleInMenuState(true);
+        _gameManager.UpdatePlayerMenuState(true);
     }
 
     private void OnClose()
     {
         Time.timeScale = 1f;
-        _player.States.ToggleInMenuState(false);
+        _gameManager.UpdatePlayerMenuState(false);
     }
 }
