@@ -13,8 +13,16 @@ MonoBehaviour:
   m_Name: MainBlockDataBase
   m_EditorClassIdentifier: Assembly-CSharp::BlockDatabase
   allBlocks:
+  - {fileID: 11400000, guid: 5e4e1cd12fb5a43e2ac8ae27eabf6f83, type: 2}
   - {fileID: 11400000, guid: 870dc9c10be2f458e89e1ae626b4996f, type: 2}
+  - {fileID: 11400000, guid: 4c4e8733970c245ceb09e68cc3183926, type: 2}
+  - {fileID: 11400000, guid: ad167d359474145fa8594460ce182f17, type: 2}
+  - {fileID: 11400000, guid: 7346a376154064511bca9b4c403ab8e1, type: 2}
+  - {fileID: 11400000, guid: 5995135fd791b4f59a404151e72b0537, type: 2}
   - {fileID: 11400000, guid: 8cc2b06d3b0d74b83a7af0d6cd947d9d, type: 2}
+  - {fileID: 11400000, guid: 4dbd4f8e307974ef0b1d161e89e07dac, type: 2}
   _crackTiles:
   - {fileID: 11400000, guid: b3a3d2ce4e4414cc99833c1c4b698bd1, type: 2}
   - {fileID: 11400000, guid: e9edc5fe4a75145e980d0b2327024f0e, type: 2}
+  - {fileID: 11400000, guid: d4b342797336e49389dfb6e72be396f9, type: 2}
+  - {fileID: 11400000, guid: 8a7f24567d4664bf5b2485469add608c, type: 2}

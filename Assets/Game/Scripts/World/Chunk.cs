@@ -71,22 +71,16 @@ public class Chunk : MonoBehaviour
         if ((layer & WorldLayer.Damage) != 0)
             UpdateLayer(DamageMap, WorldLayer.Damage);
     }
-
-    public void SetTilesBatch(TileBase[] tiles, BoundsInt area)
-    {
-        var collider = MainMap.GetComponent<TilemapCollider2D>();
-        if (collider != null) collider.enabled = false;
-
-        MainMap.SetTilesBlock(area, tiles);
-
-        if (collider != null) collider.enabled = true;
-    }
     public void Clear()
     {
         MainMap.ClearAllTiles();
         BackgroundMap.ClearAllTiles();
         ForegroundMap.ClearAllTiles();
         DamageMap.ClearAllTiles();
+    }
+    public int GetChunkSize()
+    {
+        return _settings.ChunkSize;
     }
 }
 

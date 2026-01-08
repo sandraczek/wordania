@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class WorldPassCave : IWorldGenerationPass
 {
+    int airId = 0;
     public void Execute(WorldData data, WorldSettings settings)
     {
         for (int x = 0; x < settings.Width; x++)
@@ -17,15 +18,11 @@ public class WorldPassCave : IWorldGenerationPass
                 float combinedNoise = (macroNoise * settings.MacroWeight) + (microNoise * settings.MicroWeight);
                 combinedNoise *= depthMask;
 
-                float tunnelNoise = GetNoise(x, y, settings.Seed + 2, settings.TunnelScale);
-                float tunnelValue = Mathf.Abs(tunnelNoise - 0.5f);
-
-                if (combinedNoise > settings.GlobalCaveDensity || tunnelValue < settings.TunnelThreshold * depthMask)
+                if (combinedNoise > settings.GlobalCaveDensity)
                 {
-                    if (data.GetTile(x,y).Main != 0)
+                    if (data.GetTile(x,y).Main != airId)
                     {
-                        // data.TileArray[x, y].Background = 2;
-                        data.GetTile(x,y).Main = 0;
+                        data.GetTile(x,y).Main = airId;
                     }
                 }
             }

@@ -11,7 +11,6 @@ public class BlockData : ScriptableObject
     public TileBase Tile;
 
     [Header("Stats")]
-    [Range(1, 10)]
     public float Hardness = 1;
     
     [Header("Item Info")]

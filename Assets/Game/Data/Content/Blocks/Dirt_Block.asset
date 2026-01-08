@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a5e7cab0d255400b80acfcff18232bd, type: 3}
   m_Name: Dirt_Block
   m_EditorClassIdentifier: Assembly-CSharp::BlockData
-  ID: 1
-  DisplayName: Dirt Block
-  Tile: {fileID: 11400000, guid: 705478cd9da320047896e2831699e2a4, type: 2}
+  ID: 2
+  Tile: {fileID: 11400000, guid: d7ba9659749144e478b9ca75918efd07, type: 2}
   Hardness: 3
   recipe: {fileID: 11400000, guid: 48eb7bf9348da4b01b6e131a6c3d5021, type: 2}
   loot: {fileID: 11400000, guid: 05fd660022b5149439cee3fefa678988, type: 2}

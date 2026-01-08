@@ -39,6 +39,7 @@ public class WorldData
     public ref TileData GetTile(int x, int y)
     {
         Debug.Assert(_width != 0);
+        if(x >= _width || x < 0 || y >= _height || y < 0) Debug.Log(x.ToString() + ", " + y.ToString());
         return ref Tiles[x + y * _width];
     }
 }

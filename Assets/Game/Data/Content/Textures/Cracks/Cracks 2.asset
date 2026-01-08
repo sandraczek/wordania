@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Stone_Block_Texture
-  m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 2021935202, guid: 5fe5454ec8605de43809133b020d1b69, type: 3}
-  m_Color: {r: 0.3726415, g: 1, b: 0.953529, a: 1}
+  m_Name: Cracks 2
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.Tilemaps.Tile
+  m_Sprite: {fileID: 6087057004831310022, guid: 64180abf35a3443f4af39af87af3fb6d, type: 3}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.6509804}
   m_Transform:
     e00: 1
     e01: 0

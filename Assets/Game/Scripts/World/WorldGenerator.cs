@@ -13,6 +13,8 @@ public class WorldGenerator : MonoBehaviour
         IWorldGenerationPass[] pipeline = {
             new WorldPassTerrain(),
             new WorldPassCave(),
+            new WorldPassVariations(),
+            new WorldPassBarrier()
         };
 
         foreach (var pass in pipeline) {

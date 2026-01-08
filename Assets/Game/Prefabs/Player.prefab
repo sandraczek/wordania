@@ -257,16 +257,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7e5c471226004c6dbc12ed3a2e0d5bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  worldManager: {fileID: 0}
-  _actionRange: 6
+  _worldManager: {fileID: 0}
+  _actionRange: 8
   _actionRate: 0.05
   _minePower: 1
-  _areaMine: 0
+  _areaMine: 1
   _areaRadius: 1.5
   _currentBlockIndex: 0
   _buildingBlocks:
   - {fileID: 11400000, guid: 870dc9c10be2f458e89e1ae626b4996f, type: 2}
   - {fileID: 11400000, guid: 8cc2b06d3b0d74b83a7af0d6cd947d9d, type: 2}
+  - {fileID: 11400000, guid: 7346a376154064511bca9b4c403ab8e1, type: 2}
+  - {fileID: 11400000, guid: ad167d359474145fa8594460ce182f17, type: 2}
 --- !u!114 &7467025079361125769
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,10 +1,11 @@
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
+[RequireComponent(typeof(Chunk))]
 public class ChunkDebugger : MonoBehaviour
 {
     private LineRenderer _lineRenderer;
-    [SerializeField] private Vector2 chunkSize = new Vector2(16, 16);
+    private int _chunkSize;
 
     private void Awake()
     {
@@ -14,12 +15,15 @@ public class ChunkDebugger : MonoBehaviour
         _lineRenderer.loop = true;
         _lineRenderer.positionCount = 4;
         _lineRenderer.useWorldSpace = false;
-
+    }
+    private void Start()
+    {
+        _chunkSize = GetComponent<Chunk>().GetChunkSize();
         _lineRenderer.SetPositions(new Vector3[] {
             new Vector3(0, 0, 0),
-            new Vector3(chunkSize.x, 0, 0),
-            new Vector3(chunkSize.x, chunkSize.y, 0),
-            new Vector3(0, chunkSize.y, 0)
+            new Vector3(_chunkSize, 0, 0),
+            new Vector3(_chunkSize, _chunkSize, 0),
+            new Vector3(0, _chunkSize, 0)
         });
 
         // Ukrywamy na starcie

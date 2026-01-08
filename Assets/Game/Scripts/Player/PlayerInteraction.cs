@@ -7,12 +7,12 @@ public class PlayerInteraction : MonoBehaviour
     private Player _player;
     [field:SerializeField] private WorldManager _worldManager;
     private bool _isPrimaryActionHeld = false;
-    [SerializeField] private float _actionRange = 6f;
+    [SerializeField] private float _actionRange = 8f;
     [field: SerializeField] private float _actionRate = 0.05f;
     [Header("Mining")]
     [field: SerializeField] private float _minePower = 1f; 
     private float _nextActionTime;
-    [field: SerializeField] private bool _areaMine = false;
+    [field: SerializeField] private bool _areaMine = true;
     [field: SerializeField] private float _areaRadius = 1.5f;
     [Header("Building")]
     [SerializeField] private int _currentBlockIndex;
@@ -94,7 +94,16 @@ public class PlayerInteraction : MonoBehaviour
         if(!_player.States.CurrentState.CanSetSlot) return;
         switch (_interactionMode){
             case InteractionMode.mine:
-                _areaMine = !_areaMine;
+                if(_areaRadius == 1.5f)
+                {
+                    _areaRadius = 3f;
+                    _minePower = 0.67f;
+                }
+                else
+                {
+                    _areaRadius = 1.5f;
+                    _minePower = 1f;
+                }
                 break;
             case InteractionMode.build:
                 _currentBlockIndex+=1;

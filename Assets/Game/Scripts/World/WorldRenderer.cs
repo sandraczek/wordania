@@ -33,45 +33,12 @@ public class WorldRenderer : MonoBehaviour
             }
         }
     }
-    public void RenderWorld(WorldData data)
+    public void RenderWorld()
     {
-        int chunkSize = _settings.ChunkSize;
-        
-        for (int cx = 0; cx < _chunks.GetLength(0); cx++)
+        foreach (Chunk chunk in _chunks)
         {
-            for (int cy = 0; cy < _chunks.GetLength(1); cy++)
-            {
-                TileBase[] chunkTiles = new TileBase[chunkSize * chunkSize];
-                
-                for (int lx = 0; lx < chunkSize; lx++)
-                {
-                    for (int ly = 0; ly < chunkSize; ly++)
-                    {
-                        int worldX = cx * chunkSize + lx;
-                        int worldY = cy * chunkSize + ly;
-
-                        if (worldX < _settings.Width && worldY < _settings.Height)
-                        {
-                            int id = data.GetTile(worldX, worldY).Main;
-                            if (id != 0)
-                            {
-                                chunkTiles[lx + ly * chunkSize] = _blockDatabase.GetBlock(id).Tile;
-                            }
-                            else
-                            {
-                                chunkTiles[lx + ly * chunkSize] = null;
-                            }
-
-                            // Now we only render main tilemap
-                        }
-                    }
-                }
-
-                BoundsInt area = new(0, 0, 0, chunkSize, chunkSize, 1);
-                _chunks[cx, cy].SetTilesBatch(chunkTiles, area);
-            }
+            chunk.Refresh(WorldLayer.Main | WorldLayer.Background | WorldLayer.Foreground);
         }
-        // ADD RENDERING FOR OTHER MAPS
     }
     public void ChunkRefresh(Vector2Int pos, WorldLayer layer)
     {

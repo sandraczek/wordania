@@ -24,16 +24,17 @@ public class WorldManager : MonoBehaviour
     public void StartWorldGeneration()
     {
         Debug.Assert(Data == null);
+        Debug.Assert(Settings.Width % Settings.ChunkSize == 0 && Settings.Height % Settings.ChunkSize == 0);
         Data = _generator.GenerateWorld(Settings);
         _renderer.CreateChunks();
-        _renderer.RenderWorld(Data);
+        _renderer.RenderWorld();
     }
     public void LoadWorldData(WorldData data)
     {
         Debug.Assert(Data == null);
         Data = data;
         _renderer.CreateChunks();
-        _renderer.RenderWorld(Data);
+        _renderer.RenderWorld();
     }
     public bool TryDamageBlock(Vector3 worldPosition, float damagePower)
     {

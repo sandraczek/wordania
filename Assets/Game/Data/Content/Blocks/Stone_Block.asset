@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a5e7cab0d255400b80acfcff18232bd, type: 3}
   m_Name: Stone_Block
   m_EditorClassIdentifier: Assembly-CSharp::BlockData
-  ID: 2
-  Tile: {fileID: 11400000, guid: 8b50cd380016b4aceabf6f4a06ee5582, type: 2}
-  Hardness: 5
+  ID: 3
+  Tile: {fileID: 11400000, guid: 7c880015cc8d145d18e5cb3f5f400eaa, type: 2}
+  Hardness: 6
   recipe: {fileID: 11400000, guid: b1d022fd4287b46ab8cea1b2bd7ab989, type: 2}
   loot: {fileID: 11400000, guid: 746469d7d4efc41b4954a7764d80960e, type: 2}
   lootAmount: 3

@@ -13,25 +13,33 @@ MonoBehaviour:
   m_Name: WorldSettings
   m_EditorClassIdentifier: Assembly-CSharp::WorldSettings
   TileSize: 1
-  Width: 900
-  Height: 600
-  Seed: 299826
-  ChunkSize: 16
+  Width: 1280
+  Height: 640
+  Seed: 701516
+  ChunkSize: 32
   HeightMultiplier: 400
   SurfaceOffset: 300
   SurfaceFrequency: 0.001
   Octaves: 7
   Persistence: 0.6
   Lacunarity: 1.8
+  StoneNoiseScale: 0.001
+  StoneNoiseAmplitude: 70
+  MinDirtLayerDepth: 30
+  dirt_stoneTransitionMargin: 4
+  dirt_wall_Terrain_Scale: 0.01
+  dirt_wall_Terrain_Amplitude: 16
   GlobalCaveDensity: 0.52
   MacroScale: 0.04
   MacroWeight: 0.6
   MicroScale: 0.14
   MicroWeight: 0.4
-  TunnelScale: 0.08
-  TunnelThreshold: 0.015
-  CaveStartDepth: 1
+  CaveStartDepth: 0.9
   CaveFullDensityDepth: 0.65
+  GraniteScale: 0.08
+  GraniteThreshold: 0.01
+  DirtStoneScale: 0.06
+  DirtStoneThreshold: 0.35
   PreventBuildingLayer:
     serializedVersion: 2
     m_Bits: 192
