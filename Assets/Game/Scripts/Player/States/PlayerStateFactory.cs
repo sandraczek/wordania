@@ -7,6 +7,7 @@ public class PlayerStateFactory
     public PlayerBaseState Jump { get; private set; }
     public PlayerBaseState Fall { get; private set; }
     public PlayerBaseState InMenu { get; private set; }
+    public PlayerBaseState Hurt { get; private set; }
 
     public PlayerStateFactory(Player player)
     {
@@ -16,5 +17,6 @@ public class PlayerStateFactory
         Jump = new PlayerJumpState(_player, this);
         Fall = new PlayerFallState(_player, this);
         InMenu = new PlayerInMenuState(_player, this);
+        Hurt = new PlayerHurtState(_player, this);
     }
 }

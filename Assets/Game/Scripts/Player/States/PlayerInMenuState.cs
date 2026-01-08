@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class PlayerInMenuState : PlayerBaseState
 {
-    public override bool CanPerformActions => true;
-    public override bool CanSetSlot => true;
     public PlayerInMenuState(Player player, PlayerStateFactory factory) : base(player, factory)
     {
     }

@@ -45,6 +45,9 @@ public class GameManager : MonoBehaviour
             _player.LoadData(data.playerData);
             _player.Inventory.LoadInventory(data.Inventory);
         }
+        _player.Data.Health = 100f;
+        _player.Data.MaxHealth = 100f;
+        _player.Initialize();
 
         yield return new WaitForFixedUpdate();
 

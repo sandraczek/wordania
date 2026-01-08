@@ -3,13 +3,13 @@ public class PlayerStateMachine : MonoBehaviour
 {
     private Player _player;
     public PlayerBaseState CurrentState {get;private set;}
-    private PlayerStateFactory _factory;
+    public PlayerStateFactory Factory {get;private set;}
 
     void Awake()
     {
         _player = GetComponent<Player>();
-        _factory = new PlayerStateFactory(_player);
-        CurrentState = _factory.Idle;
+        Factory = new PlayerStateFactory(_player);
+        CurrentState = Factory.Idle;
     }
     void Start()
     {
@@ -37,11 +37,11 @@ public class PlayerStateMachine : MonoBehaviour
     {
         if (isEnteringMenu)
         {
-            SwitchState(_factory.InMenu); 
+            SwitchState(Factory.InMenu); 
         }
         else
         {
-            SwitchState(_factory.Idle);
+            SwitchState(Factory.Idle);
         }
     }
 }

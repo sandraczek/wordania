@@ -11,7 +11,7 @@ public class PlayerConfig : ScriptableObject
     public float AirStoppingSpeed; // = 0.01f;
     public float AccelerationSpeed; // = 0.2f;
     public float JumpForce; // = 24f;
-     public float StepLookDistance; // = 0.2f;
+    public float StepLookDistance; // = 0.2f;
 
     [field: Header("Feel Adjustments")]
     public float JumpBuffor; // = 0.1f;   // jump when pressed before hitting ground
@@ -26,4 +26,9 @@ public class PlayerConfig : ScriptableObject
     [field: Header("Ground Check")]
     public Vector2 GroundCheckSize; // = new(2.4f, 0.1f);
     public float GroundCheckDistance; // = 0.1f;
+
+    [Header("Fall Damage")]
+    public float fallDamageThreshold = 15f;
+    public float fallDamageMultiplier = 2.5f;
+    public int fallDamageSourceID = 5000;
 }

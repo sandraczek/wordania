@@ -18,10 +18,13 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public float LastGroundedTime { get; private set; } = 0f;
     [field: SerializeField] public bool IsGrounded { get; private set; }
 
+    private float _lastVerticalVelocity;
+
     private bool _isFacingRight= true;
 
     [field: Header("Events")]
     public event Action<Vector3> OnPlayerWarped;
+    public event Action<float> OnLanded;
 
 
     private void Awake()
@@ -45,11 +48,23 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        bool wasGrounded = IsGrounded;
+
         IsGrounded = CheckGrounded();
 
         if (IsGrounded)
         {
             LastGroundedTime = Time.time;
+        }
+
+        if (!IsGrounded) 
+        {
+            _lastVerticalVelocity = Mathf.Abs(_rb.linearVelocity.y);
+        }
+        if (IsGrounded && !wasGrounded)
+        {
+            OnLanded?.Invoke(_lastVerticalVelocity);
+            Debug.Log(_lastVerticalVelocity);
         }
     }
     public void Warp(Vector3 targetPosition) 
