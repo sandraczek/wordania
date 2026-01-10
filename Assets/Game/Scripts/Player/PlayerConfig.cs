@@ -30,5 +30,4 @@ public class PlayerConfig : ScriptableObject
     [Header("Fall Damage")]
     public float fallDamageThreshold = 15f;
     public float fallDamageMultiplier = 2.5f;
-    public int fallDamageSourceID = 5000;
 }

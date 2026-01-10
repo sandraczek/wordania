@@ -1,10 +1,12 @@
 using UnityEngine;
+using System;
 
 [RequireComponent(typeof(PlayerStateMachine))]
 [RequireComponent(typeof(PlayerController))]
 [RequireComponent(typeof(PlayerHealth))]
 public class Player : MonoBehaviour
 {
+    public static Player Local {get;private set;}
     public InputReader Inputs;
 
     private PlayerController _controller;
@@ -14,6 +16,7 @@ public class Player : MonoBehaviour
     public PlayerStateMachine States => _states;
     [field:SerializeField] public PlayerConfig Config {get; private set;}
     [field:SerializeField] public InventoryData Inventory {get; private set;}
+    [SerializeField] private PlayerVisuals visuals;
     private PlayerData _data;
     public PlayerData Data { get 
     {
@@ -23,21 +26,28 @@ public class Player : MonoBehaviour
     private PlayerHealth _health;
     public PlayerHealth Health => _health;
 
+    public static event Action<Player> OnLocalPlayerReady;
+
     public void Awake()
     {
         _controller = GetComponent<PlayerController>();
         _states = GetComponent<PlayerStateMachine>();
         _health = GetComponent<PlayerHealth>();
-        _controller.Initialize(Config);
+        _controller.Setup(Config);
         _data = new();
     }
     public void Initialize()
     {
         _health.Initialize(_data.Health);
+
+        Local = this;
+
+        OnLocalPlayerReady?.Invoke(Local);
     }
     private void OnEnable()
     {
         _health.OnHurt += HandleHurt;
+        _health.OnHurt += HandleHurtVisuals;
         _health.OnDeath += HandleDeath;
         _controller.OnLanded += HandleLanding;
     }
@@ -45,6 +55,7 @@ public class Player : MonoBehaviour
     private void OnDisable()
     {
         _health.OnHurt -= HandleHurt;
+        _health.OnHurt -= HandleHurtVisuals;
         _health.OnDeath -= HandleDeath;
         _controller.OnLanded -= HandleLanding;
     }
@@ -67,11 +78,15 @@ public class Player : MonoBehaviour
         if (velocity > Config.fallDamageThreshold)
         {
             float damage = CalculateFallDamage(velocity);
-            Health.TakeDamage(damage, Config.fallDamageSourceID);
+            if(damage > 0f) Health.TakeDamage(damage, DamageSource.FALL_DAMAGE);
         }
     }
     private float CalculateFallDamage(float velocity)
     {
         return (velocity - Config.fallDamageThreshold) * Config.fallDamageMultiplier;
+    }
+    private void HandleHurtVisuals()
+    {
+        visuals.PlayHurtEffect();
     }
 }

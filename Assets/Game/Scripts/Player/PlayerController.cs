@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public float LastGroundedTime { get; private set; } = 0f;
     [field: SerializeField] public bool IsGrounded { get; private set; }
 
-    private float _lastVerticalVelocity;
+    private float _maxFallSpeed;
 
     private bool _isFacingRight= true;
 
@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     {
         SetGravity(_config.GravityScale);
     }
-    public void Initialize(PlayerConfig config)
+    public void Setup(PlayerConfig config)
     {
         _config = config;
     }
@@ -49,22 +49,24 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         bool wasGrounded = IsGrounded;
-
         IsGrounded = CheckGrounded();
 
         if (IsGrounded)
         {
             LastGroundedTime = Time.time;
+            
+            if (!wasGrounded)
+            {
+                OnLanded?.Invoke(Mathf.Abs(_maxFallSpeed));
+                _maxFallSpeed = 0;
+            }
         }
-
-        if (!IsGrounded) 
+        else
         {
-            _lastVerticalVelocity = Mathf.Abs(_rb.linearVelocity.y);
-        }
-        if (IsGrounded && !wasGrounded)
-        {
-            OnLanded?.Invoke(_lastVerticalVelocity);
-            Debug.Log(_lastVerticalVelocity);
+            if (_rb.linearVelocityY < _maxFallSpeed)
+            {
+                _maxFallSpeed = _rb.linearVelocityY;
+            }
         }
     }
     public void Warp(Vector3 targetPosition) 

@@ -12,7 +12,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     [Header("Settings")]
     [SerializeField] private float _invincibilityDuration = 0.8f;
     
-    [SerializeField] private float Current;
+    [SerializeField] public float Current {get; private set;}
     public float Max => _player.Data.MaxHealth;
 
     public event Action<HealthUpdateArgs> OnHealthChanged;
@@ -31,7 +31,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public void Initialize(float startHP)
     {
         Current = startHP;
-        NotifyHealthChange(0); 
     }
 
     public void TakeDamage(float amount, int sourceID)
@@ -61,11 +60,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public void Heal(float amount)
     {
         if (Current <= 0) return;
-        Debug.Assert(amount <= 0f);
+        Debug.Assert(amount >= 0f);
 
         Current = Mathf.Min(Current + Mathf.Abs(amount), Max);
         _player.Data.Health = Current;
-        NotifyHealthChange(-1); // ID -1 is healing
+        NotifyHealthChange(DamageSource.HEAL);
     }
 
     private void Die()
