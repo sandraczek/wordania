@@ -1,10 +1,13 @@
 using UnityEngine;
+using System;
 
 [RequireComponent(typeof(Player))]
-public class PlayerInventory : MonoBehaviour
+public class PlayerInventory : MonoBehaviour//, ISaveable
 {
     private Player _player;
     [SerializeField] private LootEvent _lootChannel;
+
+    public string PersistenceId => "Player_Inventory";
 
     private void Awake()
     {
@@ -19,4 +22,21 @@ public class PlayerInventory : MonoBehaviour
     private void HandleLoot(ItemData item, int amount) {
         _player.Inventory.AddItem(item, amount);
     }
+
+    // public object CaptureState()
+    // {
+        
+    // }
+
+    public void RestoreState(object state)
+    {
+
+    }
+}
+
+[Serializable]
+public struct ItemSaveData
+{
+    public int id;
+    public int amount;
 }

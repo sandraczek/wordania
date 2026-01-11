@@ -1,12 +1,12 @@
 using UnityEngine;
 using System;
+using TMPro;
 
 [RequireComponent(typeof(PlayerStateMachine))]
 [RequireComponent(typeof(PlayerController))]
 [RequireComponent(typeof(PlayerHealth))]
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, ISaveable
 {
-    public static Player Local {get;private set;}
     public InputReader Inputs;
 
     private PlayerController _controller;
@@ -17,16 +17,10 @@ public class Player : MonoBehaviour
     [field:SerializeField] public PlayerConfig Config {get; private set;}
     [field:SerializeField] public InventoryData Inventory {get; private set;}
     [SerializeField] private PlayerVisuals visuals;
-    private PlayerData _data;
-    public PlayerData Data { get 
-    {
-        _data.SetPosition(transform.position); 
-        return _data;
-    } }
     private PlayerHealth _health;
     public PlayerHealth Health => _health;
 
-    public static event Action<Player> OnLocalPlayerReady;
+    public string PersistenceId => "Player_Main";
 
     public void Awake()
     {
@@ -34,18 +28,10 @@ public class Player : MonoBehaviour
         _states = GetComponent<PlayerStateMachine>();
         _health = GetComponent<PlayerHealth>();
         _controller.Setup(Config);
-        _data = new();
-    }
-    public void Initialize()
-    {
-        _health.Initialize(_data.Health);
-
-        Local = this;
-
-        OnLocalPlayerReady?.Invoke(Local);
     }
     private void OnEnable()
     {
+        SaveManager.Service.Register(this);
         _health.OnHurt += HandleHurt;
         _health.OnHurt += HandleHurtVisuals;
         _health.OnDeath += HandleDeath;
@@ -54,15 +40,11 @@ public class Player : MonoBehaviour
 
     private void OnDisable()
     {
+        SaveManager.Service.Unregister(this);
         _health.OnHurt -= HandleHurt;
         _health.OnHurt -= HandleHurtVisuals;
         _health.OnDeath -= HandleDeath;
         _controller.OnLanded -= HandleLanding;
-    }
-    public void LoadData(PlayerData data)
-    {
-        _data = data;
-        _controller.Warp(_data.Position);
     }
     private void HandleHurt()
     {
@@ -88,5 +70,33 @@ public class Player : MonoBehaviour
     private void HandleHurtVisuals()
     {
         visuals.PlayHurtEffect();
+    }
+
+    public object CaptureState()
+    {
+        return new PlayerData(
+            Controller.Position,
+            _health.Current,
+            _health.Max
+        );
+    }
+
+    public void RestoreState(object state)
+    {
+        if (state is Newtonsoft.Json.Linq.JObject jObject)
+        {
+            var dataJ = jObject.ToObject<PlayerData>();
+            ApplyData(dataJ);
+        }
+        else if (state is PlayerData data)
+        {
+            ApplyData(data);
+        }
+    }
+    private void ApplyData(PlayerData data)
+    {
+        if (data == null) return;
+        Controller.Position = data.Position;
+        _health.SetInitial(data.Health, data.MaxHealth);
     }
 }

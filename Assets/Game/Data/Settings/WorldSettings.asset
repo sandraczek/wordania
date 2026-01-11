@@ -15,7 +15,7 @@ MonoBehaviour:
   TileSize: 1
   Width: 1280
   Height: 640
-  Seed: 701516
+  Seed: 315788
   ChunkSize: 32
   HeightMultiplier: 400
   SurfaceOffset: 300

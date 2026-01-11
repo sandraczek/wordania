@@ -10,7 +10,7 @@ public class WorldRenderer : MonoBehaviour
     [SerializeField] private WorldManager _manager;
 
     private Chunk[,] _chunks;
-    public void Initialize(WorldSettings settings)
+    public void Setup(WorldSettings settings)
     {
         _settings = settings;
     }

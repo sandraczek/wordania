@@ -17,13 +17,13 @@ public class InventoryDisplayUI : MonoBehaviour
     private void Awake()
     {
         _pool = new ObjectPool<InventorySlotUI>(
-            createFunc: OnCreateSlot,         // Co robić, gdy brakuje obiektów w puli?
-            actionOnGet: OnGetSlot,           // Co robić, gdy wyjmujemy obiekt z puli?
-            actionOnRelease: OnReleaseSlot,   // Co robić, gdy chowany obiekt do puli?
-            actionOnDestroy: OnDestroySlot,   // Co robić, gdy usuwamy obiekt na stałe?
-            collectionCheck: false,           // Dla wydajności wyłączamy sprawdzanie czy obiekt już jest w puli
-            defaultCapacity: 20,              // Ile slotów przygotować na start
-            maxSize: 100                      // Maksymalny limit obiektów w pamięci
+            createFunc: OnCreateSlot,
+            actionOnGet: OnGetSlot,
+            actionOnRelease: OnReleaseSlot,
+            actionOnDestroy: OnDestroySlot,
+            collectionCheck: false,
+            defaultCapacity: 20,
+            maxSize: 100
         );
     }
 

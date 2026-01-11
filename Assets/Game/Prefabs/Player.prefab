@@ -312,5 +312,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98749f1d2fe434985b946ae1dd3ffca3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  _current: {fileID: 11400000, guid: 8ef1a331e30c643a1bb4a13211260ced, type: 2}
+  _max: {fileID: 11400000, guid: fc801a76c8a854b2ba00b0622582e1bd, type: 2}
   _invincibilityDuration: 0.8
-  Current: 0

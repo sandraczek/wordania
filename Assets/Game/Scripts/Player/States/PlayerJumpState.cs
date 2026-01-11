@@ -10,7 +10,7 @@ public class PlayerJumpState : PlayerAirState
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (Time.time >= _player.Controller.LastJumpTime + _player.Config.MinJumpDuration && _player.Controller.GetVelocityY() < 0f)
+        if (Time.time >= _player.Controller.LastJumpTime + _player.Config.MinJumpDuration && _player.Controller.VelocityY < 0f)
         {
             _player.States.SwitchState(_factory.Fall);
             return;
@@ -20,7 +20,7 @@ public class PlayerJumpState : PlayerAirState
     public override void EnterState()
     {
         base.EnterState();
-        _player.Controller.SetVelocityY(_player.Config.JumpForce);
+        _player.Controller.VelocityY = _player.Config.JumpForce;
 
         _player.Inputs.ConsumeJump();
         _player.Controller.LastJumpTime = Time.time;
@@ -40,7 +40,7 @@ public class PlayerJumpState : PlayerAirState
     public override void UpdateState()
     {
         base.UpdateState();
-        if (!_player.Inputs.JumpInput && _player.Controller.GetVelocityY() > 0f)
+        if (!_player.Inputs.JumpInput && _player.Controller.VelocityY > 0f)
         {
             _player.Controller.SetGravity(_player.Config.GravityScale * _player.Config.LowJumpGravityMultiplier);
         }

@@ -41,11 +41,11 @@ public class PlayerActiveState : PlayerBaseState
         float currentAccel = (Mathf.Abs(xInput) > 0.1f) ? acceleration : deceleration;
 
         float newVelocityX = Mathf.MoveTowards(
-            _player.Controller.GetVelocityX(), 
+            _player.Controller.VelocityX, 
             targetSpeed, 
             currentAccel * _player.Config.MoveSpeed * speedMultiplier
         );
 
-        _player.Controller.SetVelocityX(newVelocityX);
+        _player.Controller.VelocityX = newVelocityX;
     }
 }

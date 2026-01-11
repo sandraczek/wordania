@@ -1,6 +1,4 @@
 using System;
-using NUnit.Framework;
-using Unity.Mathematics;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -19,7 +17,30 @@ public class PlayerController : MonoBehaviour
     [field: SerializeField] public bool IsGrounded { get; private set; }
 
     private float _maxFallSpeed;
-
+    public float VelocityX
+    {
+        get => _rb.linearVelocityX;
+        set
+        {
+            _rb.linearVelocityX = value;
+        }
+    }
+    public float VelocityY
+    {
+        get => _rb.linearVelocityY;
+        set
+        {
+            _rb.linearVelocityY = value;
+        }
+    }
+    public Vector2 Position
+    {
+        get => _rb.position;
+        set
+        {
+            Warp(value);
+        }
+    }
     private bool _isFacingRight= true;
 
     [field: Header("Events")]
@@ -69,11 +90,11 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    public void Warp(Vector3 targetPosition) 
+    private void Warp(Vector2 targetPosition) 
     {
-        Vector3 delta = targetPosition - transform.position;
+        Vector2 delta = targetPosition - _rb.position;
 
-        transform.position = targetPosition;
+        _rb.position = targetPosition;
         _rb.linearVelocity = Vector2.zero;
 
         OnPlayerWarped?.Invoke(delta);
@@ -147,22 +168,6 @@ public class PlayerController : MonoBehaviour
     public void SetGravity(float scale)
     {
         _rb.gravityScale = scale;
-    }
-    public void SetVelocityX(float velX)
-    {
-        _rb.linearVelocityX = velX;
-    }
-    public void SetVelocityY(float velY)
-    {
-        _rb.linearVelocityY = velY;
-    }
-    public float GetVelocityX()
-    {
-        return _rb.linearVelocityX;
-    }
-    public float GetVelocityY()
-    {
-        return _rb.linearVelocityY;
     }
 
     private void OnDrawGizmos()

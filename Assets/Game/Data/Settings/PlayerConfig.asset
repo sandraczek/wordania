@@ -29,5 +29,4 @@ MonoBehaviour:
   GroundCheckSize: {x: 2.4, y: 0.1}
   GroundCheckDistance: 0.1
   fallDamageThreshold: 60
-  fallDamageMultiplier: 1.5
-  fallDamageSourceID: 5000
+  fallDamageMultiplier: 2.5

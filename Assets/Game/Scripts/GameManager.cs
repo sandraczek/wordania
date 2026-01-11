@@ -13,24 +13,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] private SaveManager _saveManager;
     [SerializeField] private CameraManager _cameraManager;
     [Range(1,9)]
-    [SerializeField] private int _saveSlot = 1;
+    [SerializeField] private int _saveSlotID = 1;
+    [SerializeField] private bool NewGame = true;
 
     void Awake()
     {
         _blockDatabase.Initialize();
         _itemDatabase.Initialize();
-        _worldManager.Initialize(_blockDatabase);
+        _worldManager.Setup(_blockDatabase);
     }
     public void Start()
     {
-        StartCoroutine(StartGameCoroutine());
-    }
-    private IEnumerator StartGameCoroutine() 
-    {
         Physics2D.simulationMode = SimulationMode2D.Script;
-        SaveData data = _saveManager.Load(_saveSlot);
-        if(data == null)
-        {
+        if(NewGame){
             RandomizeSeed();
             _worldManager.StartWorldGeneration();
 
@@ -39,49 +34,42 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            _worldManager.LoadWorldData(data.worldData);
+            SpawnPlayer(new Vector2(0,0));
+            LoadGame();
 
-            SpawnPlayer(_worldManager.Settings.GridToWorld(_worldManager.Data.SpawnPoint.x, _worldManager.Data.SpawnPoint.y));
-            _player.LoadData(data.playerData);
-            _player.Inventory.LoadInventory(data.Inventory);
         }
-        _player.Data.Health = 100f;
-        _player.Data.MaxHealth = 100f;
-        _player.Initialize();
-
-        yield return new WaitForFixedUpdate();
 
         Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
     }
-    private IEnumerator RestartGameCoroutine() 
-    {
-        int saveSlot = _saveSlot; 
-        Physics2D.simulationMode = SimulationMode2D.Script;
-        AsyncOperation op = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
-        while (!op.isDone) yield return null;
+    // private IEnumerator RestartGameCoroutine() 
+    // {
+    //     int saveSlot = _saveSlot; 
+    //     Physics2D.simulationMode = SimulationMode2D.Script;
+    //     AsyncOperation op = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+    //     while (!op.isDone) yield return null;
 
-        SaveData data = _saveManager.Load(saveSlot);
-        if(data == null)
-        {
-            RandomizeSeed();
-            _worldManager.StartWorldGeneration();
+    //     SaveData data = _saveManager.Load(saveSlot);
+    //     if(data == null)
+    //     {
+    //         RandomizeSeed();
+    //         _worldManager.StartWorldGeneration();
 
-            SpawnPlayer(_worldManager.Settings.GridToWorld(_worldManager.Data.SpawnPoint.x, _worldManager.Data.SpawnPoint.y));
-            // here starting profile for player
-        }
-        else
-        {
-            _worldManager.LoadWorldData(data.worldData);
+    //         SpawnPlayer(_worldManager.Settings.GridToWorld(_worldManager.Data.SpawnPoint.x, _worldManager.Data.SpawnPoint.y));
+    //         // here starting profile for player
+    //     }
+    //     else
+    //     {
+    //         _worldManager.LoadWorldData(data.worldData);
 
-            SpawnPlayer(_worldManager.Settings.GridToWorld(_worldManager.Data.SpawnPoint.x, _worldManager.Data.SpawnPoint.y));
-            _player.LoadData(data.playerData);
-            _player.Inventory.LoadInventory(data.Inventory);
-        }
+    //         SpawnPlayer(_worldManager.Settings.GridToWorld(_worldManager.Data.SpawnPoint.x, _worldManager.Data.SpawnPoint.y));
+    //         _player.LoadData(data.playerData);
+    //         _player.Inventory.LoadInventory(data.Inventory);
+    //     }
 
-        yield return new WaitForFixedUpdate();
+    //     yield return new WaitForFixedUpdate();
 
-        Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
-    }
+    //     Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
+    // }
 
     private void RandomizeSeed()
     {
@@ -91,21 +79,16 @@ public class GameManager : MonoBehaviour
     [ContextMenu("SaveGame")]
     public void SaveGame()
     {
-        SaveData data = new();
-        data.worldData = _worldManager.Data;
-        data.Inventory = _player.Inventory.SaveInventory();
-        data.playerData = _player.Data;
-        _saveManager.Save(data, _saveSlot);
+        _saveManager.RequestSave();
     }
     [ContextMenu("Delete save file")]
     public void DeleteSaveFile()
     {
-        _saveManager.DeleteSaveFile(_saveSlot);
+        SaveManager.Service.DeleteSaveFile(GetSaveSlot(_saveSlotID));
     }
-    [ContextMenu("Load Game")]
-    public void RestartGame()
+    public void LoadGame()
     {
-        StartCoroutine(RestartGameCoroutine());
+        _saveManager.RequestLoad();
     }
     private void SpawnPlayer(Vector2 position)
     {
@@ -120,6 +103,10 @@ public class GameManager : MonoBehaviour
         {
             _player.States.ToggleInMenuState(isInMenu);
         }
+    }
+    private string GetSaveSlot(int id)
+    {
+        return "SaveSlot_" + id.ToString();
     }
 }
 

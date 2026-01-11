@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using System.Data;
 
 [RequireComponent(typeof(WorldGenerator))]
-public class WorldManager : MonoBehaviour
+public class WorldManager : MonoBehaviour, ISaveable
 {
     private BlockDatabase _blockDatabase;
     public WorldData Data {get; private set;}
+
+    public string PersistenceId => "World";
+
     public WorldSettings Settings;
     private WorldGenerator _generator;
     [SerializeField] private WorldRenderer _renderer;
@@ -15,9 +18,17 @@ public class WorldManager : MonoBehaviour
     public void Awake()
     {
         _generator = GetComponent<WorldGenerator>();
-        _renderer.Initialize(Settings);
+        _renderer.Setup(Settings);
     }
-    public void Initialize(BlockDatabase database)
+    void OnEnable()
+    {
+        SaveManager.Service.Register(this);
+    }
+    void OnDisable()
+    {
+        SaveManager.Service.Unregister(this);
+    }
+    public void Setup(BlockDatabase database)
     {
         _blockDatabase = database;
     }
@@ -29,13 +40,13 @@ public class WorldManager : MonoBehaviour
         _renderer.CreateChunks();
         _renderer.RenderWorld();
     }
-    public void LoadWorldData(WorldData data)
-    {
-        Debug.Assert(Data == null);
-        Data = data;
-        _renderer.CreateChunks();
-        _renderer.RenderWorld();
-    }
+    // public void LoadWorldData(WorldData data)
+    // {
+    //     Debug.Assert(Data == null);
+    //     Data = data;
+    //     _renderer.CreateChunks();
+    //     _renderer.RenderWorld();
+    // }
     public bool TryDamageBlock(Vector3 worldPosition, float damagePower)
     {
         Vector2Int pos = Settings.WorldToGrid(worldPosition);
@@ -70,55 +81,55 @@ public class WorldManager : MonoBehaviour
         return changedLayers;
     }
     public bool TryDamageCircle(Vector2 worldPos, float radius, float damagePower)
-{
-    int minX = Mathf.FloorToInt(worldPos.x - radius);
-    int maxX = Mathf.CeilToInt(worldPos.x + radius);
-    int minY = Mathf.FloorToInt(worldPos.y - radius);
-    int maxY = Mathf.CeilToInt(worldPos.y + radius);
-
-    Dictionary<Vector2Int, WorldLayer> chunksToUpdate = new();
-    
-    bool hitAnything = false;
-
-    for (int x = minX; x <= maxX; x++)
     {
-        for (int y = minY; y <= maxY; y++)
+        int minX = Mathf.FloorToInt(worldPos.x - radius);
+        int maxX = Mathf.CeilToInt(worldPos.x + radius);
+        int minY = Mathf.FloorToInt(worldPos.y - radius);
+        int maxY = Mathf.CeilToInt(worldPos.y + radius);
+
+        Dictionary<Vector2Int, WorldLayer> chunksToUpdate = new();
+        
+        bool hitAnything = false;
+
+        for (int x = minX; x <= maxX; x++)
         {
-            if (!IsWithinBounds(x, y)) continue;
-
-            float closestX = Mathf.Clamp(worldPos.x, x, x + 1f);
-            float closestY = Mathf.Clamp(worldPos.y, y, y + 1f);
-            float distSq = (worldPos.x - closestX) * (worldPos.x - closestX) + 
-                           (worldPos.y - closestY) * (worldPos.y - closestY);
-
-            if (distSq <= radius * radius)
+            for (int y = minY; y <= maxY; y++)
             {
-                WorldLayer result = DamageTile(x, y, damagePower);
+                if (!IsWithinBounds(x, y)) continue;
 
-                if (result != WorldLayer.None)
+                float closestX = Mathf.Clamp(worldPos.x, x, x + 1f);
+                float closestY = Mathf.Clamp(worldPos.y, y, y + 1f);
+                float distSq = (worldPos.x - closestX) * (worldPos.x - closestX) + 
+                            (worldPos.y - closestY) * (worldPos.y - closestY);
+
+                if (distSq <= radius * radius)
                 {
-                    hitAnything = true;
-                    Vector2Int coord = GetChunkCoord(x, y);
+                    WorldLayer result = DamageTile(x, y, damagePower);
 
-                    if (!chunksToUpdate.ContainsKey(coord))
-                        chunksToUpdate[coord] = result;
-                    else
-                        chunksToUpdate[coord] |= result;
+                    if (result != WorldLayer.None)
+                    {
+                        hitAnything = true;
+                        Vector2Int coord = GetChunkCoord(x, y);
+
+                        if (!chunksToUpdate.ContainsKey(coord))
+                            chunksToUpdate[coord] = result;
+                        else
+                            chunksToUpdate[coord] |= result;
+                    }
                 }
             }
         }
-    }
 
-    if (hitAnything)
-    {
-        foreach (var entry in chunksToUpdate)
+        if (hitAnything)
         {
-            _renderer.ChunkRefresh(entry.Key, entry.Value);
+            foreach (var entry in chunksToUpdate)
+            {
+                _renderer.ChunkRefresh(entry.Key, entry.Value);
+            }
         }
-    }
 
-    return hitAnything;
-}
+        return hitAnything;
+    }
 
     public bool TryPlaceBlock(Vector3 worldPosition, int blockID)
     {
@@ -164,5 +175,31 @@ public class WorldManager : MonoBehaviour
         int cx = x / Settings.ChunkSize;
         int cy = y / Settings.ChunkSize;
         return new Vector2Int(cx,cy);
+    }
+
+    public object CaptureState()
+    {
+        return Data;
+    }
+
+    public void RestoreState(object state)
+    {
+      if (state is Newtonsoft.Json.Linq.JObject jObject)
+        {
+            var dataJ = jObject.ToObject<WorldData>();
+            ApplyData(dataJ);
+        }
+        else if (state is WorldData data)
+        {
+            ApplyData(data);
+        }
+    }
+    private void ApplyData(WorldData data)
+    {
+        if (data == null) return;
+        Debug.Assert(Data == null);
+        Data = data;
+        _renderer.CreateChunks();
+        _renderer.RenderWorld();
     }
 }
