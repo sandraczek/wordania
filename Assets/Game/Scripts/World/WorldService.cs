@@ -14,7 +14,6 @@ public class WorldService :ISaveable, IWorldService, IDisposable
     private readonly WorldSettings _settings;
     private readonly IWorldGenerator _generator;
     private readonly ISaveService _save;
-    private readonly IWorldRenderer _renderer;
 
     [Header("Data")]
     public WorldData Data {get; private set;}
@@ -23,12 +22,14 @@ public class WorldService :ISaveable, IWorldService, IDisposable
     [Header("Save data")]
     public string PersistenceId => "World";
 
+    public event Action<Vector2Int, WorldLayer> OnBlockChanged;
+    public event Action OnWorldGenerated;
+
     public WorldService(
         IBlockDatabase blockDatabase,
         WorldSettings settings,
         IWorldGenerator generator,
         ISaveService saveService,
-        IWorldRenderer worldRenderer,
         LootEvent lootEvent
         )
     {
@@ -36,7 +37,6 @@ public class WorldService :ISaveable, IWorldService, IDisposable
         _settings = settings;
         _generator = generator;
         _save = saveService;
-        _renderer = worldRenderer;
         _lootEvent = lootEvent;
 
         _save.Register(this);
@@ -51,8 +51,7 @@ public class WorldService :ISaveable, IWorldService, IDisposable
         Debug.Assert(Data == null);
         Debug.Assert(_settings.Width % _settings.ChunkSize == 0 && _settings.Height % _settings.ChunkSize == 0);
         Data = _generator.GenerateWorld();
-        _renderer.CreateChunks();
-        _renderer.RenderWorld();
+        OnWorldGenerated?.Invoke();
     }
     // public void LoadWorldData(WorldData data)
     // {
@@ -69,7 +68,7 @@ public class WorldService :ISaveable, IWorldService, IDisposable
         if (result == WorldLayer.None) return false;
 
         Vector2Int coord = GetChunkCoord(pos.x, pos.y);
-        _renderer.ChunkRefresh(coord, result);
+        OnBlockChanged?.Invoke(coord, result);
         return true;
     }
     public WorldLayer DamageTile(int x, int y, float damagePower)
@@ -138,7 +137,7 @@ public class WorldService :ISaveable, IWorldService, IDisposable
         {
             foreach (var entry in chunksToUpdate)
             {
-                _renderer.ChunkRefresh(entry.Key, entry.Value);
+                OnBlockChanged?.Invoke(entry.Key, entry.Value);
             }
         }
 
@@ -159,7 +158,7 @@ public class WorldService :ISaveable, IWorldService, IDisposable
 
         Data.GetTile(pos.x,pos.y).Main = blockID;
         Vector2Int coord = GetChunkCoord(pos.x, pos.y);
-        _renderer.ChunkRefresh(coord, WorldLayer.Main);
+        OnBlockChanged?.Invoke(coord, WorldLayer.Main);
         return true;
     }
 
@@ -213,7 +212,6 @@ public class WorldService :ISaveable, IWorldService, IDisposable
         if (data == null) return;
         Debug.Assert(Data == null);
         Data = data;
-        _renderer.CreateChunks();
-        _renderer.RenderWorld();
+        OnWorldGenerated?.Invoke();
     }
 }

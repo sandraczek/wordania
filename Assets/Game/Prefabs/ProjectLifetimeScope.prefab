@@ -48,3 +48,7 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  _blockDatabase: {fileID: 11400000, guid: 081207bfca7514f3a8b67a5ab77d494f, type: 2}
+  _itemDatabase: {fileID: 11400000, guid: b9d9d6775118e424d9cf6b9b6e084732, type: 2}
+  _inputReader: {fileID: 11400000, guid: 97ff5691243544603a04e9f5fd529761, type: 2}
+  _defaultWorldSettings: {fileID: 11400000, guid: 8bd3fd8847cad47b0bfd36f0478e773f, type: 2}

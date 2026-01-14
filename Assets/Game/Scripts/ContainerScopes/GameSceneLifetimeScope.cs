@@ -7,27 +7,31 @@ public sealed class GameSceneLifetimeScope : LifetimeScope
         [Header("Scene References")]
         [SerializeField] private CameraService _cameraService;
         [SerializeField] private WorldRenderer _worldRenderer;
+        [SerializeField] private ChunkFactory _chunkFactory;
+        [SerializeField] private WorldChunksRoot _chunksParent;
+        [SerializeField] private LootEvent _lootEvent;
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterComponent(_cameraService)
-                .AsImplementedInterfaces();
-                
-            builder.RegisterComponent(_worldRenderer);
+            builder.RegisterInstance(_cameraService).AsImplementedInterfaces();
 
-            builder.Register<WorldService>(Lifetime.Scoped)
-                .AsImplementedInterfaces()
-                .AsSelf();
+            builder.Register<WorldPassTerrain>(Lifetime.Scoped).As<IWorldGenerationPass>();
+            builder.Register<WorldPassCave>(Lifetime.Scoped).As<IWorldGenerationPass>();
+            builder.Register<WorldPassVariations>(Lifetime.Scoped).As<IWorldGenerationPass>();
+            builder.Register<WorldPassBarrier>(Lifetime.Scoped).As<IWorldGenerationPass>();
 
-            builder.Register<WorldPassTerrain>(Lifetime.Singleton).As<IWorldGenerationPass>();
-            builder.Register<WorldPassCave>(Lifetime.Singleton).As<IWorldGenerationPass>();
-            builder.Register<WorldPassVariations>(Lifetime.Singleton).As<IWorldGenerationPass>();
-            builder.Register<WorldPassBarrier>(Lifetime.Singleton).As<IWorldGenerationPass>();
+            builder.Register<WorldGenerator>(Lifetime.Scoped).AsImplementedInterfaces();
 
-            builder.Register<WorldGenerator>(Lifetime.Singleton);
+            builder.RegisterInstance(_lootEvent);
+
+            builder.Register<WorldService>(Lifetime.Scoped).AsImplementedInterfaces();
+
+            builder.RegisterComponent(_chunksParent);
+            builder.Register<ChunkFactory>(Lifetime.Scoped).AsImplementedInterfaces();
+            builder.Register<WorldRenderer>(Lifetime.Scoped).AsImplementedInterfaces();
             
+            builder.Register<Player>(Lifetime.Scoped);
 
-            // EntryPoint: Klasa, która zainicjuje start gry na tej scenie
             builder.RegisterEntryPoint<GameplayState>();
         }
     }

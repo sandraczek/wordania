@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 public class WorldRenderer : IWorldRenderer
@@ -7,27 +8,26 @@ public class WorldRenderer : IWorldRenderer
     private readonly WorldSettings _settings;
     private readonly IWorldService _world;
     private readonly Transform _chunksParent;
-    private readonly ChunkFactory _factory;
+    private readonly IChunkFactory _factory;
 
     [Header("Data")]        
     private Chunk[,] _chunks;
-    public void Setup(WorldSettings settings)
-    {
-        
-    }
     public WorldRenderer(
         IBlockDatabase blockDatabase,
         WorldSettings settings,
         IWorldService worldService,
-        Transform chunksParent,
-        ChunkFactory factory
+        WorldChunksRoot chunksParent,
+        IChunkFactory factory
         )
     {
         _blockDatabase = blockDatabase;
         _settings = settings;
         _world = worldService;
-        _chunksParent = chunksParent;
+        _chunksParent = chunksParent.transform;
         _factory = factory;
+
+        _world.OnBlockChanged += ChunkRefresh;
+        _world.OnWorldGenerated += HandleWorldGenerated;
     }
 
     public void CreateChunks()
@@ -44,17 +44,22 @@ public class WorldRenderer : IWorldRenderer
             }
         }
     }
-    public void RenderWorld()
+    private void RenderWorld()
     {
         foreach (Chunk chunk in _chunks)
         {
             chunk.Refresh(WorldLayer.Main | WorldLayer.Background | WorldLayer.Foreground);
         }
     }
-    public void ChunkRefresh(Vector2Int pos, WorldLayer layer)
+    private void ChunkRefresh(Vector2Int pos, WorldLayer layer)
     {
         Chunk chunk = _chunks[pos.x,pos.y];
         chunk.Refresh(layer);
     }
-
+    
+    private void HandleWorldGenerated()
+    {
+        CreateChunks();
+        RenderWorld();
+    }
 }
