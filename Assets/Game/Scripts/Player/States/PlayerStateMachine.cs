@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Player))]
-public class PlayerStateMachine : MonoBehaviour, IPlayerStateMachine
+public class PlayerStateMachine : MonoBehaviour
 {
     public PlayerBaseState CurrentState {get;private set;}
     // private PlayerBaseState CurrentState;
@@ -9,7 +9,7 @@ public class PlayerStateMachine : MonoBehaviour, IPlayerStateMachine
     void Initialize(PlayerBaseState initialState)
     {
         CurrentState = initialState;
-        CurrentState.EnterState();
+        CurrentState.EnterState(); 
     }
 
     void Update()

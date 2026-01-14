@@ -5,7 +5,7 @@ public class HealthService : IHealthService
 {
     public float Current { get; private set; } = 100f;
     public float Max { get; private set; } = 100f;
-    public event Action<float> OnHealthChanged;
+    public event Action OnHealthChanged;
 
     public void ModifyHealth(float amount)
     {
@@ -20,12 +20,12 @@ public class HealthService : IHealthService
         if (Mathf.Approximately(Current, newHealth)) return;
 
         Current = newHealth;
-        OnHealthChanged?.Invoke(Current);
+        OnHealthChanged?.Invoke();
     }
     public void Initialize(float current, float max)
     {
         Max = max;
         Current = Mathf.Clamp(current, 0, Max);
-        OnHealthChanged?.Invoke(current);
+        OnHealthChanged?.Invoke();
     }
 }

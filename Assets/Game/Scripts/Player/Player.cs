@@ -9,6 +9,7 @@ public class Player : MonoBehaviour, ISaveable
 {
     [Header("Components")]
     private PlayerController _controller;
+    public PlayerController Controller =>_controller; // temporary for GameplayState to connect camera
     private PlayerStateMachine _states;
     private PlayerHealthView _health;
     [SerializeField] private PlayerVisuals visuals;

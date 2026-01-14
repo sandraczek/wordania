@@ -20,19 +20,14 @@ public sealed class PlayerHealthView : MonoBehaviour, IDamageable
         healthService.OnHealthChanged += HandleHealthChanged;
     }
 
-    private void Update()
-    {
-        _healthProcessor.UpdateTick(Time.deltaTime);
-    }
-
     public void TakeDamage(float amount)
     {
-        _healthProcessor.ApplyDamage(amount);
+        _healthProcessor.TakeDamage(amount);
         OnHurt?.Invoke();
     }
 
-    private void HandleHealthChanged(float currentHealth)
+    private void HandleHealthChanged()
     {
-        if (currentHealth <= 0) OnDeath?.Invoke();
+        if (_healthProcessor.Current <= 0) OnDeath?.Invoke();
     }
 }

@@ -7,7 +7,7 @@ public interface IPlayerHealth
     float Ratio => Current / Max;
     bool IsInvincible { get; }
 
-    event Action<float> OnHealthChanged;
+    event Action OnHealthChanged;
     event Action OnDeath;
     event Action OnHurt;
 

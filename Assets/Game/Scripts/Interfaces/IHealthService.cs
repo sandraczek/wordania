@@ -8,5 +8,5 @@ public interface IHealthService
     public void ModifyHealth(float amount);
     public void SetHealth(float health);
     public void Initialize(float current, float max);
-    event Action<float> OnHealthChanged;
+    event Action OnHealthChanged;
 }

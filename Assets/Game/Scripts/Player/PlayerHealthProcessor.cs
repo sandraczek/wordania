@@ -3,9 +3,6 @@ using VContainer;
 using System;
 using VContainer.Unity;
 
-using UnityEngine;
-using VContainer.Unity;
-
 public sealed class PlayerHealthProcessor : IPlayerHealth, ITickable
 {
     private readonly PlayerConfig _config;
@@ -16,14 +13,14 @@ public sealed class PlayerHealthProcessor : IPlayerHealth, ITickable
     public float Max => _config.MaxHealth;
     public bool IsInvincible => _invincibilityTimer > 0;
 
-    public event Action<float> OnHealthChanged;
+    public event Action OnHealthChanged;
     public event Action OnDeath;
     public event Action OnHurt;
 
     public PlayerHealthProcessor(PlayerConfig config)
     {
         _config = config;
-        _currentHealth = 100f;//config.MaxHealth;
+        _currentHealth = config.MaxHealth;
     }
 
     public void TakeDamage(float amount)
@@ -33,7 +30,7 @@ public sealed class PlayerHealthProcessor : IPlayerHealth, ITickable
         _currentHealth = Mathf.Clamp(_currentHealth - amount, 0, Max);
         _invincibilityTimer = 0.8f;//_config.InvincibilityDuration;
 
-        OnHealthChanged?.Invoke(_currentHealth);
+        OnHealthChanged?.Invoke();
         OnHurt?.Invoke();
 
         if (_currentHealth <= 0) OnDeath?.Invoke();
@@ -43,7 +40,7 @@ public sealed class PlayerHealthProcessor : IPlayerHealth, ITickable
     {
         if (_currentHealth <= 0) return;
         _currentHealth = Mathf.Clamp(_currentHealth + amount, 0, Max);
-        OnHealthChanged?.Invoke(_currentHealth);
+        OnHealthChanged?.Invoke();
     }
 
     public void Tick()

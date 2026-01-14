@@ -34,12 +34,17 @@ public class InputReader : ScriptableObject, GameInput.IPlayerActions, GameInput
     public void Dispose()
     {
         DisableAllInput();
+        if(_inputActions == null) return;
         _inputActions?.Dispose();
         _inputActions = null;
     }
 
     public void EnablePlayerInput() => _inputActions.Player.Enable();
-    public void DisableAllInput() => _inputActions.Disable();
+    public void DisableAllInput()
+    {
+        if(_inputActions == null) return;
+        _inputActions.Disable();
+    }
 
     public void OnMove(InputAction.CallbackContext context)
     {

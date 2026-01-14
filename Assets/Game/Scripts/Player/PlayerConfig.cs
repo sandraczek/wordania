@@ -2,7 +2,10 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "PlayerConfig", menuName = "Player/PlayerConfig")]
 public class PlayerConfig : ScriptableObject
-{
+{   
+    [Header("Stats")]
+    public float MaxHealth;
+
     [field: Header("Movement Stats")]
     public float MoveSpeed; // = 14f;
     public float MoveSpeedAirMult; // = 0.8f;
