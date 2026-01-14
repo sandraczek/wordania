@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class PlayerInMenuState : PlayerBaseState
 {
-    public PlayerInMenuState(Player player, PlayerStateFactory factory) : base(player, factory)
+    private readonly IInventoryService _inventoryService;
+    public PlayerInMenuState(PlayerContext context, IInputReader inputs, PlayerStateFactory playerStateFactory, IInventoryService inventoryService) : base(context, inputs, playerStateFactory)
     {
+        _inventoryService = inventoryService;
     }
 
     public override void CheckSwitchStates()
@@ -13,12 +15,12 @@ public class PlayerInMenuState : PlayerBaseState
 
     public override void EnterState()
     {
-        
+        _inventoryService.SetVisibility(true);
     }
 
     public override void ExitState()
     {
-
+        _inventoryService.SetVisibility(false);
     }
 
     public override void FixedUpdateState()

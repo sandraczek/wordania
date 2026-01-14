@@ -1,83 +1,107 @@
-using UnityEngine;
 using System;
-using TMPro;
-
+using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 [RequireComponent(typeof(PlayerStateMachine))]
 [RequireComponent(typeof(PlayerController))]
-[RequireComponent(typeof(PlayerHealth))]
+[RequireComponent(typeof(PlayerHealthView))]
 public class Player : MonoBehaviour, ISaveable
 {
-    public InputReader Inputs;
-
+    [Header("Components")]
     private PlayerController _controller;
-    public PlayerController Controller => _controller;
-
     private PlayerStateMachine _states;
-    public PlayerStateMachine States => _states;
-    [field:SerializeField] public PlayerConfig Config {get; private set;}
-    [field:SerializeField] public InventoryData Inventory {get; private set;}
+    private PlayerHealthView _health;
     [SerializeField] private PlayerVisuals visuals;
-    private PlayerHealth _health;
-    public PlayerHealth Health => _health;
 
-    public string PersistenceId => "Player_Main";
+    [Header("Dependencies")]
+    private InputReader _inputs;
+    private PlayerStateFactory _factory;
+    private PlayerConfig _config;
+    private ISaveService _save;
+    
+    [Header("Save Data")]
+    public string PersistenceId => "Player";  
 
     public void Awake()
     {
         _controller = GetComponent<PlayerController>();
         _states = GetComponent<PlayerStateMachine>();
-        _health = GetComponent<PlayerHealth>();
-        _controller.Setup(Config);
+        _health = GetComponent<PlayerHealthView>();
+    }
+    [Inject]
+    public void Configure(InputReader inputs, PlayerStateFactory factory, PlayerConfig config, ISaveService save)
+    {
+        _inputs = inputs;
+        _factory = factory;
+        _config = config;
+        _save = save;
+
+        _save.Register(this);
+    }
+    public void OnDestroy()
+    {
+        _save.Unregister(this);
     }
     private void OnEnable()
     {
-        SaveManager.Service.Register(this);
-        _health.OnHurt += HandleHurt;
+        _health.OnHurt += HandleHurt;     // to do - make player not a god object
         _health.OnHurt += HandleHurtVisuals;
         _health.OnDeath += HandleDeath;
         _controller.OnLanded += HandleLanding;
+        _inputs.OnToggleInventory += HandleInventoryToggle;
     }
 
     private void OnDisable()
     {
-        SaveManager.Service.Unregister(this);
         _health.OnHurt -= HandleHurt;
         _health.OnHurt -= HandleHurtVisuals;
         _health.OnDeath -= HandleDeath;
         _controller.OnLanded -= HandleLanding;
+        _inputs.OnToggleInventory -= HandleInventoryToggle;
     }
     private void HandleHurt()
     {
-        _states.SwitchState(_states.Factory.Hurt);
+        _states.SwitchState(_factory.Hurt);
     }
 
     private void HandleDeath()
     {
         //_states.SwitchState(_states.Factory.Dead);
     }
-    private void HandleLanding(float velocity)
+    private void HandleInventoryToggle()
     {
-        if (velocity > Config.fallDamageThreshold)
+        if (_states.CurrentState == _factory.InMenu)
         {
-            float damage = CalculateFallDamage(velocity);
-            if(damage > 0f) Health.TakeDamage(damage, DamageSource.FALL_DAMAGE);
+            _states.SwitchState(_factory.Idle);
+        }
+        else
+        {
+            _states.SwitchState(_factory.InMenu);
         }
     }
-    private float CalculateFallDamage(float velocity)
+    private void HandleLanding(float velocity)  // to move
     {
-        return (velocity - Config.fallDamageThreshold) * Config.fallDamageMultiplier;
+        if (velocity > _config.fallDamageThreshold)
+        {
+            float damage = CalculateFallDamage(velocity);
+            if(damage > 0f) _health.TakeDamage(damage);
+        }
+    }
+    private float CalculateFallDamage(float velocity) // to move
+    {
+        return (velocity - _config.fallDamageThreshold) * _config.fallDamageMultiplier;
     }
     private void HandleHurtVisuals()
     {
         visuals.PlayHurtEffect();
     }
 
+    // ----- Save -----
+
     public object CaptureState()
     {
-        return new PlayerData(
-            Controller.Position,
-            _health.Current,
-            _health.Max
+        return new PlayerSaveData(
+            _controller.Position
         );
     }
 
@@ -85,18 +109,17 @@ public class Player : MonoBehaviour, ISaveable
     {
         if (state is Newtonsoft.Json.Linq.JObject jObject)
         {
-            var dataJ = jObject.ToObject<PlayerData>();
+            var dataJ = jObject.ToObject<PlayerSaveData>();
             ApplyData(dataJ);
         }
-        else if (state is PlayerData data)
+        else if (state is PlayerSaveData data)
         {
             ApplyData(data);
         }
     }
-    private void ApplyData(PlayerData data)
+    private void ApplyData(PlayerSaveData data)
     {
         if (data == null) return;
-        Controller.Position = data.Position;
-        _health.SetInitial(data.Health, data.MaxHealth);
+        _controller.Position = data.Position;
     }
 }

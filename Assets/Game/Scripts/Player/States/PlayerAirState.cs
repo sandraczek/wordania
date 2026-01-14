@@ -3,22 +3,20 @@ using UnityEngine;
 
 public class PlayerAirState : PlayerActiveState
 {
-    public PlayerAirState(Player player, PlayerStateFactory factory) : base(player, factory)
-    {
-    }
+    public PlayerAirState(PlayerContext context, IInputReader inputs, PlayerStateFactory playerStateFactory) : base(context, inputs, playerStateFactory){}
 
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (Time.time >= _player.Controller.LastJumpTime + _player.Config.MinJumpDuration && _player.Controller.IsGrounded)
+        if (Time.time >= _context.Controller.LastJumpTime + _context.Config.MinJumpDuration && _context.Controller.IsGrounded)
         {
-            if(Math.Abs(_player.Inputs.MovementInput.x) > 0.1f)
+            if(Math.Abs(_inputs.MovementInput.x) > 0.1f)
             {
-                _player.States.SwitchState(_factory.Run);
+                _context.States.SwitchState(_factory.Run);
                 return;
             }
             else{
-                _player.States.SwitchState(_factory.Idle);
+                _context.States.SwitchState(_factory.Idle);
                 return;
             }
         }
@@ -37,12 +35,12 @@ public class PlayerAirState : PlayerActiveState
     public override void FixedUpdateState()
     {
         base.FixedUpdateState();
-        ApplyStandardMovement(_player.Config.AirAccelerationSpeed, _player.Config.AirStoppingSpeed, _player.Config.MoveSpeedAirMult);
+        ApplyStandardMovement(_context.Config.AirAccelerationSpeed, _context.Config.AirStoppingSpeed, _context.Config.MoveSpeedAirMult);
     }
 
     public override void UpdateState()
     {
         base.UpdateState();
-        _player.Controller.CheckForFlip(_player.Inputs.MovementInput.x);
+        _context.Controller.CheckForFlip(_inputs.MovementInput.x);
     }
 }

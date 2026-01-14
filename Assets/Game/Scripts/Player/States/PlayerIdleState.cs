@@ -3,16 +3,14 @@ using UnityEngine;
 
 public class PlayerIdleState : PlayerGroundState
 {
-    public PlayerIdleState(Player player, PlayerStateFactory playerStateFactory) : base(player, playerStateFactory)
-    {
-    }
+    public PlayerIdleState(PlayerContext context, IInputReader inputs, PlayerStateFactory playerStateFactory) : base(context, inputs, playerStateFactory){}
 
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if(_player.Inputs.MovementInput.x != 0f)
+        if(_inputs.MovementInput.x != 0f)
         {
-            _player.States.SwitchState(_factory.Run);
+            _context.States.SwitchState(_factory.Run);
             return;
         }
     }

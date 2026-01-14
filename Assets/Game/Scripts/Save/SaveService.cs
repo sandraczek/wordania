@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-public class SaveService
+public class SaveService :ISaveService
 {
     private readonly IPersistenceProvider _provider;
     private readonly HashSet<ISaveable> _registeredObjects = new();
@@ -41,7 +41,7 @@ public class SaveService
             }
         }
     }
-    public void DeleteSaveFile(string slotName)
+    public void DeleteSaveFile(string slotName) //to upgrade
     {
         _provider.Delete(slotName);
     }

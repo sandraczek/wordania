@@ -1,25 +1,27 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Tilemaps;
+using System.Collections.Generic;
 
-public class WorldGenerator : MonoBehaviour
+public class WorldGenerator : IWorldGenerator
 {
-    public WorldData GenerateWorld(WorldSettings settings)
+    private readonly WorldSettings _settings;
+    private readonly IEnumerable<IWorldGenerationPass> _generationPipeline;
+    public WorldGenerator(WorldSettings settings, IEnumerable<IWorldGenerationPass> pipeline)
     {
-        Random.InitState(settings.Seed); // setting seed for Randomness
+        _settings = settings;
+        _generationPipeline = pipeline;
+    }
+    public WorldData GenerateWorld()
+    {
+        Random.InitState(_settings.Seed); // setting seed for Randomness
 
-        WorldData worldData = new(settings.Width, settings.Height);
+        WorldData worldData = new(_settings.Width, _settings.Height);
 
-        IWorldGenerationPass[] pipeline = {
-            new WorldPassTerrain(),
-            new WorldPassCave(),
-            new WorldPassVariations(),
-            new WorldPassBarrier()
-        };
-
-        foreach (var pass in pipeline) {
-            pass.Execute(worldData, settings);
+        foreach (var pass in _generationPipeline) 
+        {
+            pass.Execute(worldData);
         }
+
         return worldData;
     }
 }
+    

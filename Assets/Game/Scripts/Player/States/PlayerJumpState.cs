@@ -3,16 +3,14 @@ using Unity.Mathematics;
 
 public class PlayerJumpState : PlayerAirState
 {
-    public PlayerJumpState(Player player, PlayerStateFactory playerStateFactory) : base(player, playerStateFactory)
-    {
-    }
+    public PlayerJumpState(PlayerContext context, IInputReader inputs, PlayerStateFactory playerStateFactory) : base(context, inputs, playerStateFactory){}
 
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (Time.time >= _player.Controller.LastJumpTime + _player.Config.MinJumpDuration && _player.Controller.VelocityY < 0f)
+        if (Time.time >= _context.Controller.LastJumpTime + _context.Config.MinJumpDuration && _context.Controller.VelocityY < 0f)
         {
-            _player.States.SwitchState(_factory.Fall);
+            _context.States.SwitchState(_factory.Fall);
             return;
         }
     }
@@ -20,15 +18,15 @@ public class PlayerJumpState : PlayerAirState
     public override void EnterState()
     {
         base.EnterState();
-        _player.Controller.VelocityY = _player.Config.JumpForce;
+        _context.Controller.VelocityY = _context.Config.JumpForce;
 
-        _player.Inputs.ConsumeJump();
-        _player.Controller.LastJumpTime = Time.time;
+        _inputs.ConsumeJump();
+        _context.Controller.LastJumpTime = Time.time;
     }
 
     public override void ExitState()
     {
-        _player.Controller.SetGravity(_player.Config.GravityScale);
+        _context.Controller.SetGravity(_context.Config.GravityScale);
         base.ExitState();
     }
 
@@ -40,9 +38,9 @@ public class PlayerJumpState : PlayerAirState
     public override void UpdateState()
     {
         base.UpdateState();
-        if (!_player.Inputs.JumpInput && _player.Controller.VelocityY > 0f)
+        if (!_inputs.JumpInput && _context.Controller.VelocityY > 0f)
         {
-            _player.Controller.SetGravity(_player.Config.GravityScale * _player.Config.LowJumpGravityMultiplier);
+            _context.Controller.SetGravity(_context.Config.GravityScale * _context.Config.LowJumpGravityMultiplier);
         }
     }
 }

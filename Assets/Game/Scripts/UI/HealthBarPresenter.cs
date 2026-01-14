@@ -1,47 +1,34 @@
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 [RequireComponent(typeof(ProgressBarUI))]
 public class HealthBarPresenter : MonoBehaviour
 {
-    [SerializeField] private HealthVariable _current;
-    [SerializeField] private FloatReference _max;
+    private IHealthService _health;
     private ProgressBarUI _healthBarView;
 
+    [Inject]
+    public void Construct(IHealthService health) => _health = health;
     private void Awake()
     {
         _healthBarView = GetComponent<ProgressBarUI>();
     }
     private void OnEnable()
     {
-        _current.OnHealthChangedWithContext += HandleHealthChange;
-        _max.Variable.OnValueChanged += HandleMaxChange;
+        _health.OnHealthChanged += HandleHealthChange;
     }
     private void OnDisable()
     {
-        _current.OnHealthChangedWithContext -= HandleHealthChange;
-        _max.Variable.OnValueChanged -= HandleMaxChange;
+        _health.OnHealthChanged -= HandleHealthChange;
     }
 
-    private void HandleHealthChange(HealthChangeContext context)
+    private void HandleHealthChange()
     {
-        _healthBarView.UpdateBar(context.NewValue, _max);
-
-        // switch (context.SourceID)
-        // {
-        //     case DamageSource.FALL_DAMAGE:
-        //         //PlayFallDamageEffect();
-        //         break;
-        //     case DamageSource.POISON:
-        //         _healthBarView.SetColor(Color.green);
-        //         break;
-        //     default:
-        //         _healthBarView.SetColor(Color.red);
-        //         break;
-        // }
+        _healthBarView.UpdateBar(_health.Current, _health.Max);
     }
-    private void HandleMaxChange(float newValue)
+    private void HandleMaxChange()
     {
-        _healthBarView.UpdateBar(_current, newValue);
+        _healthBarView.UpdateBar(_health.Current, _health.Max);
     }
 }

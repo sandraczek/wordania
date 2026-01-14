@@ -4,40 +4,49 @@ using UnityEngine;
 [RequireComponent(typeof(Player))]
 public class PlayerInteraction : MonoBehaviour
 {
-    private Player _player;
-    [field:SerializeField] private WorldManager _worldManager;
+    [Header("Dependencies")]
+    private IInputReader _inputs;
+    private IWorldService _world;
+    private PlayerContext _player;
+    private IInventoryService _inventory;
+
+    [Header("Data")]
+    private InteractionMode _interactionMode = InteractionMode.build;
     private bool _isPrimaryActionHeld = false;
     [SerializeField] private float _actionRange = 8f;
-    [field: SerializeField] private float _actionRate = 0.05f;
+    [SerializeField] private float _actionRate = 0.05f;
+
     [Header("Mining")]
     [field: SerializeField] private float _minePower = 1f; 
-    private float _nextActionTime;
-    [field: SerializeField] private bool _areaMine = true;
-    [field: SerializeField] private float _areaRadius = 1.5f;
+    private float _nextActionTime = 0f;
+    [SerializeField] private bool _areaMine = true;
+    [SerializeField] private float _areaRadius = 1.5f;
+
     [Header("Building")]
     [SerializeField] private int _currentBlockIndex;
-    [SerializeField] private BlockData[] _buildingBlocks;
-    private InteractionMode _interactionMode = InteractionMode.build;
+    [SerializeField] private BlockData[] _buildingBlocks; //temporary solution
     public void Awake()
     {
-        _player = GetComponent<Player>();
         _nextActionTime = 0f;
     }
-    public void InitializeWorldManager(WorldManager manager)
+    public void Construct(IInputReader inputs, IWorldService worldService, PlayerContext playerContext, IInventoryService inventoryService)
     {
-        _worldManager = manager;
+        _inputs = inputs;
+        _world = worldService;
+        _player = playerContext;
+        _inventory = inventoryService;
     }
     public void OnEnable()
     {
-        _player.Inputs.OnHotbarSlotPressed += SetTool;
-        _player.Inputs.OnCycleActionSettings += CycleToolSetting;
-        _player.Inputs.OnPrimaryActionHeld += SetPrimaryActionHeld;
+        _inputs.OnHotbarSlotPressed += SetTool;
+        _inputs.OnCycleActionSettings += CycleToolSetting;
+        _inputs.OnPrimaryActionHeld += SetPrimaryActionHeld;
     }
     public void OnDisable()
     {
-        _player.Inputs.OnHotbarSlotPressed -= SetTool;
-        _player.Inputs.OnCycleActionSettings -= CycleToolSetting;
-        _player.Inputs.OnPrimaryActionHeld -= SetPrimaryActionHeld;
+        _inputs.OnHotbarSlotPressed -= SetTool;
+        _inputs.OnCycleActionSettings -= CycleToolSetting;
+        _inputs.OnPrimaryActionHeld -= SetPrimaryActionHeld;
     }
     public void Update()
     {
@@ -58,7 +67,7 @@ public class PlayerInteraction : MonoBehaviour
                 if(!TryBuild(targetWorldPos)) return false;
                 break;
             case InteractionMode.mine:
-                TryMine(targetWorldPos);  // Interaction even if didnt mine anything
+                TryMine(targetWorldPos);  // return true  even if didnt mine anything
                 break;
         }
         _nextActionTime = Time.time + _actionRate;
@@ -68,13 +77,13 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (_buildingBlocks[_currentBlockIndex] == null) return false;
         foreach (Ingredient ingredient in _buildingBlocks[_currentBlockIndex].recipe.Requirements){
-            if (_player.Inventory.GetQuantity(ingredient.item.Id) < ingredient.amount) return false;
+            if (_inventory.GetQuantity(ingredient.item.Id) < ingredient.amount) return false;
         }
 
-        if(!_worldManager.TryPlaceBlock(targetWorldPos, _buildingBlocks[_currentBlockIndex].ID)) return false;
+        if(!_world.TryPlaceBlock(targetWorldPos, _buildingBlocks[_currentBlockIndex].ID)) return false;
 
         foreach (Ingredient ingredient in _buildingBlocks[_currentBlockIndex].recipe.Requirements){
-            Debug.Assert(_player.Inventory.TryRemoveItem(ingredient.item, ingredient.amount));
+            Debug.Assert(_inventory.RemoveItem(ingredient.item.Id, ingredient.amount));
         }
 
         return true;
@@ -82,10 +91,10 @@ public class PlayerInteraction : MonoBehaviour
     private bool TryMine(Vector2 targetWorldPos)
     {
         if(!_areaMine){
-            if(!_worldManager.TryDamageBlock(targetWorldPos, _minePower)) return false;
+            if(!_world.TryDamageBlock(targetWorldPos, _minePower)) return false;
         }
         else{
-            if(!_worldManager.TryDamageCircle(targetWorldPos, _areaRadius, _minePower)) return false;
+            if(!_world.TryDamageCircle(targetWorldPos, _areaRadius, _minePower)) return false;
         }
         return true;
     }

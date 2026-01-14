@@ -2,21 +2,19 @@ using UnityEngine;
 
 public class PlayerGroundState : PlayerActiveState
 {
-    public PlayerGroundState(Player player, PlayerStateFactory playerStateFactory) : base(player, playerStateFactory)
-    {
-    }
+    public PlayerGroundState(PlayerContext context, IInputReader inputs, PlayerStateFactory playerStateFactory) : base(context, inputs, playerStateFactory){}
 
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if (Time.time < _player.Inputs.JumpPressedTime + _player.Config.JumpBuffor) 
+        if (Time.time < _inputs.JumpPressedTime + _context.Config.JumpBuffor) 
         {
-            _player.States.SwitchState(_factory.Jump);
+            _context.States.SwitchState(_factory.Jump);
             return;
         }
-        if (Time.time > _player.Controller.LastGroundedTime + _player.Config.CoyoteTime)
+        if (Time.time > _context.Controller.LastGroundedTime + _context.Config.CoyoteTime)
         {
-            _player.States.SwitchState(_factory.Fall);
+            _context.States.SwitchState(_factory.Fall);
             return;
         }
     }
@@ -34,9 +32,9 @@ public class PlayerGroundState : PlayerActiveState
     public override void FixedUpdateState()
     {
         base.FixedUpdateState();
-        ApplyStandardMovement(_player.Config.AccelerationSpeed, _player.Config.StoppingSpeed);
-        if(Mathf.Abs(_player.Inputs.MovementInput.x) > 0.1f){
-            _player.Controller.TryStepUp(_player.Inputs.MovementInput.x);
+        ApplyStandardMovement(_context.Config.AccelerationSpeed, _context.Config.StoppingSpeed);
+        if(Mathf.Abs(_inputs.MovementInput.x) > 0.1f){
+            _context.Controller.TryStepUp(_inputs.MovementInput.x);
         }
     }
 

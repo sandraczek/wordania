@@ -10,13 +10,13 @@ using UnityEditor;
 #endif
 
 [CreateAssetMenu(fileName = "BlockDatabase", menuName = "World/Block Database")]
-public class BlockDatabase : ScriptableObject
+public class BlockDatabase : ScriptableObject, IBlockDatabase
 {
-    public List<BlockData> allBlocks;
+    private readonly List<BlockData> allBlocks;
     private Dictionary<int, BlockData> _blockMap;
     [SerializeField] TileBase[] _crackTiles;
 
-    public void Initialize()
+    public void Initialize() // TO BE REPLACED WITH BELOW
     {
         _blockMap = new Dictionary<int, BlockData>();
         foreach (var block in allBlocks)
@@ -24,6 +24,24 @@ public class BlockDatabase : ScriptableObject
             if (block != null) _blockMap.TryAdd(block.ID, block);
         }
     }
+//     public void Initialize()
+// {
+//     // Senior Level Optimization: 
+//     // Podajemy 'Capacity' do słownika, aby uniknąć kosztownych operacji 'Resize' i rehashowania.
+//     _blockMap = new Dictionary<int, BlockData>(allBlocks.Count);
+
+//     foreach (var block in allBlocks)
+//     {
+//         if (block == null) continue;
+
+//         // Używamy TryAdd lub jawnego sprawdzenia, aby uniknąć wyjątków 
+//         // przy duplikacji ID w edytorze (częsty błąd przy SO).
+//         if (!_blockMap.TryAdd(block.ID, block))
+//         {
+//             Debug.LogWarning($"[BlockDatabase] Duplicated ID: {block.ID} for block {block.name}.");
+//         }
+//     }
+// }
 
     public BlockData GetBlock(int id)
     {

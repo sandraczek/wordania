@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d5eb59c33ef14537aaa0c12c5d0a7ab, type: 3}
   m_Name: PlayerHealth
   m_EditorClassIdentifier: Assembly-CSharp::HealthVariable
-  _value: 21.3138
+  _value: 102.972275

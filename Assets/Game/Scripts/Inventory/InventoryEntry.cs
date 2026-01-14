@@ -16,7 +16,7 @@ public class InventoryEntry
         _quantity = quantity;
     }
 
-    public void Add(int amount) 
+    public void Add(int amount) //to do - delete these methods. This is only a paper, a paper cannot write itself
     {
         _quantity = Mathf.Min(_quantity + amount, _data.MaxStackSize);
     }

@@ -3,17 +3,9 @@ using System;
 using UnityEngine.InputSystem;
 
 [CreateAssetMenu(fileName = "InputReader", menuName = "Game/Input Reader")]
-public class InputReader : ScriptableObject, GameInput.IPlayerActions
+public class InputReader : ScriptableObject, GameInput.IPlayerActions, GameInput.IDebugActions, IInputReader, IDisposable
 {
     private GameInput _inputActions;
-    public GameInput InputActions
-    {
-        get
-        {
-            if(_inputActions == null) Initialize();
-            return _inputActions;
-        }
-    }
 
     // --- Properties ---
     [field: SerializeField] public Vector2 MovementInput { get; private set; }
@@ -26,23 +18,24 @@ public class InputReader : ScriptableObject, GameInput.IPlayerActions
     public event Action<bool> OnPrimaryActionHeld;
     public event Action OnCycleActionSettings;
     public event Action OnToggleInventory;
-
-    private void OnEnable()
-    {
-        Initialize();
-    }
-    private void Initialize()
+    public event Action OnToggleChunks;
+    public void Initialize()
     {
         if (_inputActions != null) return;
         _inputActions = new GameInput();
         
         _inputActions.Player.SetCallbacks(this);
-        EnablePlayerInput();
     }
 
     private void OnDisable()
     {
+        Dispose();
+    }
+    public void Dispose()
+    {
         DisableAllInput();
+        _inputActions?.Dispose();
+        _inputActions = null;
     }
 
     public void EnablePlayerInput() => _inputActions.Player.Enable();
@@ -89,9 +82,15 @@ public class InputReader : ScriptableObject, GameInput.IPlayerActions
     {
         if (context.performed) OnToggleInventory?.Invoke();
     }
+    
 
     public void ConsumeJump()
     {
         JumpPressedTime = float.MinValue;
+    }
+
+    void GameInput.IDebugActions.OnShowChunks(InputAction.CallbackContext context)
+    {
+        if(context.performed) OnToggleChunks?.Invoke();
     }
 }

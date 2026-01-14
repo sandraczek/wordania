@@ -2,23 +2,31 @@ using UnityEngine;
 
 public class WorldPassCave : IWorldGenerationPass
 {
-    int airId = 0;
-    public void Execute(WorldData data, WorldSettings settings)
+    private readonly WorldSettings _settings;
+    private readonly IBlockDatabase _database;  // for future id refactor
+    public WorldPassCave(WorldSettings settings, IBlockDatabase database)
     {
-        for (int x = 0; x < settings.Width; x++)
+        _settings = settings;
+        _database = database;
+    }
+    public void Execute(WorldData data)
+    {
+        int airId = 0;
+        
+        for (int x = 0; x < _settings.Width; x++)
         {
-            for (int y = 0; y < settings.Height; y++)
+            for (int y = 0; y < _settings.Height; y++)
             {
-                float currentDepth = (float)y / settings.Height;
-                float depthMask = Mathf.InverseLerp(settings.CaveStartDepth, settings.CaveFullDensityDepth, currentDepth);
+                float currentDepth = (float)y / _settings.Height;
+                float depthMask = Mathf.InverseLerp(_settings.CaveStartDepth, _settings.CaveFullDensityDepth, currentDepth);
 
-                float macroNoise = GetNoise(x, y, settings.Seed, settings.MacroScale);
-                float microNoise = GetNoise(x, y, settings.Seed + 1, settings.MicroScale);
+                float macroNoise = GetNoise(x, y, _settings.Seed, _settings.MacroScale);
+                float microNoise = GetNoise(x, y, _settings.Seed + 1, _settings.MicroScale);
                 
-                float combinedNoise = (macroNoise * settings.MacroWeight) + (microNoise * settings.MicroWeight);
+                float combinedNoise = (macroNoise * _settings.MacroWeight) + (microNoise * _settings.MicroWeight);
                 combinedNoise *= depthMask;
 
-                if (combinedNoise > settings.GlobalCaveDensity)
+                if (combinedNoise > _settings.GlobalCaveDensity)
                 {
                     if (data.GetTile(x,y).Main != airId)
                     {

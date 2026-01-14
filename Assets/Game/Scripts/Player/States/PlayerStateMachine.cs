@@ -1,18 +1,14 @@
 using UnityEngine;
-public class PlayerStateMachine : MonoBehaviour
-{
-    private Player _player;
-    public PlayerBaseState CurrentState {get;private set;}
-    public PlayerStateFactory Factory {get;private set;}
 
-    void Awake()
+[RequireComponent(typeof(Player))]
+public class PlayerStateMachine : MonoBehaviour, IPlayerStateMachine
+{
+    public PlayerBaseState CurrentState {get;private set;}
+    // private PlayerBaseState CurrentState;
+
+    void Initialize(PlayerBaseState initialState)
     {
-        _player = GetComponent<Player>();
-        Factory = new PlayerStateFactory(_player);
-        CurrentState = Factory.Idle;
-    }
-    void Start()
-    {
+        CurrentState = initialState;
         CurrentState.EnterState();
     }
 
@@ -32,16 +28,5 @@ public class PlayerStateMachine : MonoBehaviour
         CurrentState.ExitState();
         CurrentState = newState;
         CurrentState.EnterState();
-    }
-    public void ToggleInMenuState(bool isEnteringMenu)
-    {
-        if (isEnteringMenu)
-        {
-            SwitchState(Factory.InMenu); 
-        }
-        else
-        {
-            SwitchState(Factory.Idle);
-        }
     }
 }

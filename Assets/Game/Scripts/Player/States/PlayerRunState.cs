@@ -3,16 +3,14 @@ using UnityEngine;
 
 public class PlayerRunState : PlayerGroundState
 {
-    public PlayerRunState(Player player, PlayerStateFactory playerStateFactory) : base(player, playerStateFactory)
-    {
-    }
+    public PlayerRunState(PlayerContext context, IInputReader inputs, PlayerStateFactory playerStateFactory) : base(context, inputs, playerStateFactory){}
 
     public override void CheckSwitchStates()
     {
         base.CheckSwitchStates();
-        if(_player.Inputs.MovementInput.x == 0f)
+        if(_inputs.MovementInput.x == 0f)
         {
-            _player.States.SwitchState(_factory.Idle);
+            _context.States.SwitchState(_factory.Idle);
             return;
         }
     }
@@ -36,6 +34,6 @@ public class PlayerRunState : PlayerGroundState
     public override void UpdateState()
     {
         base.UpdateState();
-        _player.Controller.CheckForFlip(_player.Inputs.MovementInput.x);
+        _context.Controller.CheckForFlip(_inputs.MovementInput.x);
     }
 }

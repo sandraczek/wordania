@@ -1,15 +1,18 @@
 using System;
 using UnityEngine;
+using VContainer;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
 public class PlayerController : MonoBehaviour
 {
-    [field: Header("References")]
+    [Header("Components")]
     private Rigidbody2D _rb;
     private BoxCollider2D _col;
-    [SerializeField] private InputReader _inputs;
-    [field: SerializeField] private WorldSettings _settings;
+
+    [Header("Dependencies")]
+    private IInputReader _inputs;
+    private WorldSettings _worldSettings;
     private PlayerConfig _config;
     
     [HideInInspector] public float LastJumpTime = float.MinValue;
@@ -43,11 +46,19 @@ public class PlayerController : MonoBehaviour
     }
     private bool _isFacingRight= true;
 
-    [field: Header("Events")]
     public event Action<Vector3> OnPlayerWarped;
     public event Action<float> OnLanded;
 
-
+    [Inject]
+    public void Construct(
+        IInputReader inputReader,
+        WorldSettings worldSettings, 
+        PlayerConfig config)
+    {
+        _inputs = inputReader;
+        _worldSettings = worldSettings;
+        _config = config;
+    }
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -56,16 +67,6 @@ public class PlayerController : MonoBehaviour
     public void Start()
     {
         SetGravity(_config.GravityScale);
-    }
-    public void Setup(PlayerConfig config)
-    {
-        _config = config;
-    }
-
-    private void Update()
-    {
-
-
     }
     private void FixedUpdate()
     {
@@ -104,7 +105,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 origin = (Vector2)transform.position + new Vector2(0f, -(_config.GroundCheckSize.y / 2) + 0.1f);
 
-        return Physics2D.BoxCast(origin, _config.GroundCheckSize, 0f, Vector2.down, _config.GroundCheckDistance + 0.1f, _settings.GroundLayer);
+        return Physics2D.BoxCast(origin, _config.GroundCheckSize, 0f, Vector2.down, _config.GroundCheckDistance + 0.1f, _worldSettings.GroundLayer);
     }
 
     public void CheckForFlip(float direction)
@@ -139,16 +140,16 @@ public class PlayerController : MonoBehaviour
             _col.bounds.min.y + 0.05f
         );
 
-        RaycastHit2D hitLow = Physics2D.Raycast(rayOrigin, Vector2.right * direction, _config.StepLookDistance, _settings.GroundLayer);
+        RaycastHit2D hitLow = Physics2D.Raycast(rayOrigin, Vector2.right * direction, _config.StepLookDistance, _worldSettings.GroundLayer);
         
         if (hitLow.collider != null)
         {
-            RaycastHit2D hitHigh = Physics2D.Raycast(rayOrigin + Vector2.up * _settings.TileSize, Vector2.right * direction, _config.StepLookDistance, _settings.GroundLayer);
+            RaycastHit2D hitHigh = Physics2D.Raycast(rayOrigin + Vector2.up * _worldSettings.TileSize, Vector2.right * direction, _config.StepLookDistance, _worldSettings.GroundLayer);
 
             if (hitHigh.collider == null)
             {
-                Vector2 targetPos = _rb.position + new Vector2(direction * 0.1f, _settings.TileSize + 0.05f);
-                Collider2D overlap = Physics2D.OverlapBox(targetPos + _col.offset, _col.size * 0.95f, 0, _settings.GroundLayer);
+                Vector2 targetPos = _rb.position + new Vector2(direction * 0.1f, _worldSettings.TileSize + 0.05f);
+                Collider2D overlap = Physics2D.OverlapBox(targetPos + _col.offset, _col.size * 0.95f, 0, _worldSettings.GroundLayer);
 
                 if (overlap == null)
                 {
@@ -160,7 +161,7 @@ public class PlayerController : MonoBehaviour
 
     private void ExecuteStepUp()
     {
-        _rb.MovePosition(_rb.position + Vector2.up * (_settings.TileSize + 0.05f));
+        _rb.MovePosition(_rb.position + Vector2.up * (_worldSettings.TileSize + 0.05f));
         if (_rb.linearVelocityY < 0) _rb.linearVelocityY = 0f;
     }
 

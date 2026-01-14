@@ -60,7 +60,6 @@ public class ProgressBarUI : MonoBehaviour
 
     private IEnumerator SmoothFillRoutine(float target)
     {
-        // Płynne zwiększanie paska przy leczeniu
         while (Mathf.Abs(_primaryFillImage.fillAmount - target) > 0.001f)
         {
             _primaryFillImage.fillAmount = Mathf.Lerp(_primaryFillImage.fillAmount, target, _primaryFillSpeed * Time.deltaTime);

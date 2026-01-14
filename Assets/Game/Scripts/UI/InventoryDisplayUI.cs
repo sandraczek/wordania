@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.Pool;
 using System.Collections.Generic;
+using VContainer;
 
 public class InventoryDisplayUI : MonoBehaviour
 {
-    [Header("Data Source")]
-    [SerializeField] private InventoryData _inventory;
+    [Header("Dependencies")]
+    private IInventoryService _inventory;
 
     [Header("UI Setup")]
     [SerializeField] private InventorySlotUI _slotPrefab;
@@ -25,6 +26,11 @@ public class InventoryDisplayUI : MonoBehaviour
             defaultCapacity: 20,
             maxSize: 100
         );
+    }
+    [Inject]
+    public void Construct(IInventoryService inventoryService)
+    {
+        _inventory = inventoryService;
     }
 
     #region Pool Callbacks

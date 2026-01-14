@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class WorldPassTerrain : IWorldGenerationPass
 {
-    public void Execute(WorldData data, WorldSettings settings)
+    private readonly WorldSettings _settings;
+    private readonly IBlockDatabase _database;  // for future id refactor
+    public WorldPassTerrain(WorldSettings settings, IBlockDatabase database)
+    {
+        _settings = settings;
+        _database = database;
+    }
+    public void Execute(WorldData data)
     {
         int airId = 0;
         int grassId = 1;
@@ -13,29 +20,30 @@ public class WorldPassTerrain : IWorldGenerationPass
         int dirtWallId = 1002;
         int stoneId = 3;
         int stoneWallId = 1003;
-        for (int x = 0; x < settings.Width; x++)
+        
+        for (int x = 0; x < _settings.Width; x++)
         {
-            int terrainHeight = CalculateFractalHeight(x, settings);
+            int terrainHeight = CalculateFractalHeight(x, _settings);
 
-            int stoneHeight = CalculateStoneHeight(x, terrainHeight, settings);
+            int stoneHeight = CalculateStoneHeight(x, terrainHeight, _settings);
 
-            float wallNoiseValue = Mathf.PerlinNoise((x + settings.Seed + 6767) * settings.dirt_wall_Terrain_Scale, 0);
-            int wallOffset = (int)((wallNoiseValue - 0.5f) * settings.dirt_wall_Terrain_Amplitude);
+            float wallNoiseValue = Mathf.PerlinNoise((x + _settings.Seed + 6767) * _settings.dirt_wall_Terrain_Scale, 0);
+            int wallOffset = (int)((wallNoiseValue - 0.5f) * _settings.dirt_wall_Terrain_Amplitude);
             int wallTerrainHeight = terrainHeight + wallOffset;
 
 
-            for (int y = 0; y < settings.Height; y++)
+            for (int y = 0; y < _settings.Height; y++)
             {
                 if (y > terrainHeight) {
                     data.GetTile(x, y).Main = airId;
                 } else if (y >= terrainHeight -1) {
                     data.GetTile(x, y).Main = grassId;
-                } else if (y < stoneHeight - settings.dirt_stoneTransitionMargin) {
+                } else if (y < stoneHeight - _settings.dirt_stoneTransitionMargin) {
                     data.GetTile(x, y).Main = stoneId;
-                } else if (y > stoneHeight + settings.dirt_stoneTransitionMargin) {
+                } else if (y > stoneHeight + _settings.dirt_stoneTransitionMargin) {
                     data.GetTile(x, y).Main = dirtId;
                 } else {
-                    float stoneChance = Mathf.InverseLerp(stoneHeight + settings.dirt_stoneTransitionMargin, stoneHeight - settings.dirt_stoneTransitionMargin, y);
+                    float stoneChance = Mathf.InverseLerp(stoneHeight + _settings.dirt_stoneTransitionMargin, stoneHeight - _settings.dirt_stoneTransitionMargin, y);
                     data.GetTile(x, y).Main = (Random.value < stoneChance) ? stoneId : dirtId;
                 }
 
@@ -43,19 +51,19 @@ public class WorldPassTerrain : IWorldGenerationPass
                     data.GetTile(x, y).Background = airId;
                 } else if (y >= wallTerrainHeight -1 || y > terrainHeight) {
                     data.GetTile(x,y).Background = grassWallId;
-                } else if (y < stoneHeight - settings.dirt_stoneTransitionMargin) {
+                } else if (y < stoneHeight - _settings.dirt_stoneTransitionMargin) {
                     data.GetTile(x,y).Background = stoneWallId;
-                } else if (y > stoneHeight + settings.dirt_stoneTransitionMargin) {
+                } else if (y > stoneHeight + _settings.dirt_stoneTransitionMargin) {
                     data.GetTile(x,y).Background = dirtWallId;
                 } else {
-                    float stoneChance = Mathf.InverseLerp(stoneHeight + settings.dirt_stoneTransitionMargin, stoneHeight - settings.dirt_stoneTransitionMargin, y);
+                    float stoneChance = Mathf.InverseLerp(stoneHeight + _settings.dirt_stoneTransitionMargin, stoneHeight - _settings.dirt_stoneTransitionMargin, y);
                     data.GetTile(x, y).Background = (Random.value < stoneChance) ? stoneWallId : dirtWallId;
                 }
             }
         }
 
-        int centerX = settings.Width / 2;
-        int groundY = CalculateFractalHeight(centerX, settings); 
+        int centerX = _settings.Width / 2;
+        int groundY = CalculateFractalHeight(centerX, _settings); 
         data.SpawnPoint = new Vector2Int(centerX, groundY + 2);
     }
 

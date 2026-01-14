@@ -7,12 +7,12 @@ using UnityEditor;
 #endif
 
 [CreateAssetMenu(fileName = "ItemDataBase", menuName = "Inventory/Item Database")]
-public class ItemDatabase : ScriptableObject
+public class ItemDatabase : ScriptableObject, IItemDatabase
 {
-    public List<ItemData> allItems;
+    private readonly List<ItemData> allItems;
     private Dictionary<int, ItemData> _itemMap;
 
-    public void Initialize()
+    public void Initialize() // to do - upgrade like block database
     {
         _itemMap = new Dictionary<int, ItemData>();
         foreach (var item in allItems)

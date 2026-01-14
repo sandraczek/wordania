@@ -3,9 +3,7 @@ using Unity.Mathematics;
 
 public class PlayerFallState : PlayerAirState
 {
-    public PlayerFallState(Player player, PlayerStateFactory playerStateFactory) : base(player, playerStateFactory)
-    {
-    }
+    public PlayerFallState(PlayerContext context, IInputReader inputs, PlayerStateFactory playerStateFactory) : base(context, inputs, playerStateFactory){}
 
     public override void CheckSwitchStates()
     {
@@ -15,12 +13,12 @@ public class PlayerFallState : PlayerAirState
     public override void EnterState()
     {
         base.EnterState();
-        _player.Controller.SetGravity(_player.Config.GravityScale * _player.Config.FallGravityMult);
+        _context.Controller.SetGravity(_context.Config.GravityScale * _context.Config.FallGravityMult);
     }
 
     public override void ExitState()
     {
-        _player.Controller.SetGravity(_player.Config.GravityScale);
+        _context.Controller.SetGravity(_context.Config.GravityScale);
         base.ExitState();
     }
 

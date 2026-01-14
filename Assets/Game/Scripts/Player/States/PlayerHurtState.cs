@@ -6,9 +6,7 @@ public class PlayerHurtState : PlayerBaseState
     private float _hitstunDuration = 0.2f;
     private float _hitTime;
 
-    public PlayerHurtState(Player player, PlayerStateFactory factory) : base(player, factory)
-    {
-    }
+    public PlayerHurtState(PlayerContext context, IInputReader inputs, PlayerStateFactory playerStateFactory) : base(context, inputs, playerStateFactory){}
     public override void CheckSwitchStates()
     {
         if (Time.time >= _hitstunDuration + _hitTime)
@@ -39,18 +37,18 @@ public class PlayerHurtState : PlayerBaseState
     }
     private void DetermineNextState()
 {
-    if (!_player.Controller.IsGrounded)
+    if (!_context.Controller.IsGrounded)
     {
-        _player.States.SwitchState(_factory.Fall);
+        _context.States.SwitchState(_factory.Fall);
         return;
     }
 
-    if (Mathf.Abs(_player.Inputs.MovementInput.x) > 0.1f)
+    if (Mathf.Abs(_inputs.MovementInput.x) > 0.1f)
     {
-        _player.States.SwitchState(_factory.Run);
+        _context.States.SwitchState(_factory.Run);
         return;
     }
 
-    _player.States.SwitchState(_factory.Idle);
+    _context.States.SwitchState(_factory.Idle);
 }
 }

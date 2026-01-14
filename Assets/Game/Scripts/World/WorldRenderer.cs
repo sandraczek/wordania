@@ -1,18 +1,33 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
-public class WorldRenderer : MonoBehaviour
+public class WorldRenderer : IWorldRenderer
 {
-    [SerializeField] private GameObject _chunkPrefab;
-    [SerializeField] private BlockDatabase _blockDatabase;
-    private WorldSettings _settings;
-    [SerializeField] private WorldManager _manager;
+    [Header("Dependencies")]
+    private readonly IBlockDatabase _blockDatabase;
+    private readonly WorldSettings _settings;
+    private readonly IWorldService _world;
+    private readonly Transform _chunksParent;
+    private readonly ChunkFactory _factory;
 
+    [Header("Data")]        
     private Chunk[,] _chunks;
     public void Setup(WorldSettings settings)
     {
+        
+    }
+    public WorldRenderer(
+        IBlockDatabase blockDatabase,
+        WorldSettings settings,
+        IWorldService worldService,
+        Transform chunksParent,
+        ChunkFactory factory
+        )
+    {
+        _blockDatabase = blockDatabase;
         _settings = settings;
+        _world = worldService;
+        _chunksParent = chunksParent;
+        _factory = factory;
     }
 
     public void CreateChunks()
@@ -25,11 +40,7 @@ public class WorldRenderer : MonoBehaviour
         {
             for (int y = 0; y < chunksY; y++)
             {
-                Vector3 pos = new(x * _settings.ChunkSize, y * _settings.ChunkSize, 0);
-                GameObject go = Instantiate(_chunkPrefab, pos, Quaternion.identity, transform);
-                _chunks[x, y] = go.GetComponent<Chunk>();
-                go.name = $"Chunk_{x}_{y}";
-                _chunks[x, y].Initialize(_settings, _manager, new Vector2Int(x,y));
+                _chunks[x, y] = _factory.Create(new Vector2Int(x,y), _chunksParent);
             }
         }
     }
